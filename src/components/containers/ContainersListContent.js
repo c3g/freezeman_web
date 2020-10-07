@@ -28,11 +28,11 @@ const TABLE_COLUMNS = [
   {
     title: "Children",
     dataIndex: "children",
-    align: 'right',
+    align: 'left',
     render: children => children ? children.length : null,
   },
   {
-    title: "Co-ords.",
+    title: "Coord.",
     dataIndex: "coordinates",
   },
 ];
