@@ -36,6 +36,7 @@ const api = {
   samples: {
     get: sampleId => get(`/samples/${sampleId}`),
     list: (page = {}) => get("/samples/", page),
+    listExport: () => get("/samples/list_export/"),
     listVersions: sampleId => get(`/samples/${sampleId}/versions`),
     summary: () => get("/samples/summary"),
     template: {
