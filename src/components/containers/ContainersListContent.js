@@ -1,13 +1,18 @@
 import React, {useEffect} from "react";
 import {connect} from "react-redux";
 import {Link} from "react-router-dom";
+import csvStringify from "csv-stringify/lib/sync";
 
+import {Button} from "antd";
+import "antd/es/button/style/css";
 import {BarcodeOutlined} from "@ant-design/icons";
 
 import AppPageHeader from "../AppPageHeader";
 import PageContent from "../PageContent";
 import PaginatedTable from "../PaginatedTable";
 
+import api, {withToken}  from "../../utils/api"
+import {downloadFromText}  from "../../utils/download"
 import {list, listTemplateActions} from "../../modules/containers/actions";
 import {actionsToButtonList} from "../../utils/templateActions";
 
@@ -40,7 +45,7 @@ const TABLE_COLUMNS = [
 ];
 
 const mapStateToProps = state => ({
-  token: state.auth.token,
+  token: state.auth.tokens.access,
   containersByID: state.containers.itemsByID,
   containers: state.containers.items,
   actions: state.containerTemplateActions,
@@ -50,6 +55,23 @@ const mapStateToProps = state => ({
 });
 
 const actionCreators = {list, listTemplateActions};
+
+const ExportButton = ({ exportFunction }) => {
+  const onClick = () => {
+    exportFunction()
+    .then(items => {
+      const csvText = csvStringify(items, { header: true })
+      downloadFromText('containers.csv', csvText)
+    })
+  }
+
+  return (
+    <Button onClick={onClick}>
+      Export
+    </Button>
+  )
+}
+
 
 const ContainersListContent = ({
   token,
@@ -66,11 +88,22 @@ const ContainersListContent = ({
     // Must be wrapped; effects cannot return promises
     listTemplateActions();
   }, []);
-  return <>
-    <AppPageHeader title="Containers" extra={actionsToButtonList("/containers", actions)} />
-    <PageContent>
-      <ExportCSV csvData={[]} fileName={'test'} token={token}/>
 
+  const listExport = () =>
+    withToken(token, api.containers.listExport)().then(res => res.data)
+
+  return <>
+    <AppPageHeader
+      title="Containers"
+      extra={[
+        <ExportButton
+          exportFunction={listExport}
+        />
+        ,
+        ...actionsToButtonList("/containers", actions)
+      ]}
+    />
+    <PageContent>
       <PaginatedTable
         columns={TABLE_COLUMNS}
         items={containers}

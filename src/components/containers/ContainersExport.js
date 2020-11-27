@@ -1,6 +1,6 @@
 import React from 'react'
 import * as FileSaver from 'file-saver';
-import * as XLSX from 'xlsx';
+// import * as XLSX from 'xlsx';
 import api, {withToken}  from "../../utils/api"
 
 
