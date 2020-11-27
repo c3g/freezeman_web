@@ -11,6 +11,8 @@ import PaginatedTable from "../PaginatedTable";
 import {list, listTemplateActions} from "../../modules/containers/actions";
 import {actionsToButtonList} from "../../utils/templateActions";
 
+import {ExportCSV} from "../containers/ContainersExport";
+
 const TABLE_COLUMNS = [
   {
     title: <><BarcodeOutlined style={{marginRight: "8px"}} /> Barcode</>,
@@ -38,6 +40,7 @@ const TABLE_COLUMNS = [
 ];
 
 const mapStateToProps = state => ({
+  token: state.auth.token,
   containersByID: state.containers.itemsByID,
   containers: state.containers.items,
   actions: state.containerTemplateActions,
@@ -49,6 +52,7 @@ const mapStateToProps = state => ({
 const actionCreators = {list, listTemplateActions};
 
 const ContainersListContent = ({
+  token,
   containers,
   containersByID,
   actions,
@@ -65,6 +69,8 @@ const ContainersListContent = ({
   return <>
     <AppPageHeader title="Containers" extra={actionsToButtonList("/containers", actions)} />
     <PageContent>
+      <ExportCSV csvData={[]} fileName={'test'} token={token}/>
+
       <PaginatedTable
         columns={TABLE_COLUMNS}
         items={containers}

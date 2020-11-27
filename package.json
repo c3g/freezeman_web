@@ -25,6 +25,7 @@
     "antd": "^4.4.3",
     "cross-fetch": "^3.0.6",
     "date-fns": "^2.15.0",
+    "file-saver": "^2.0.5",
     "fuse.js": "^6.4.0",
     "jsondiffpatch": "^0.4.1",
     "jwt-decode": "^2.2.0",
@@ -33,6 +34,7 @@
     "querystring": "^0.2.0",
     "rambda": "^5.9.0",
     "react": "^16.13.1",
+    "react-csv": "^2.0.3",
     "react-dom": "^16.13.1",
     "react-hot-loader": "^4.12.21",
     "react-redux": "^7.2.0",
@@ -40,7 +42,8 @@
     "redux": "^4.0.5",
     "redux-logger": "^3.0.6",
     "redux-persist": "^6.0.0",
-    "redux-thunk": "^2.3.0"
+    "redux-thunk": "^2.3.0",
+    "xlsx": "^0.16.9"
   },
   "devDependencies": {
     "@babel/core": "^7.10.5",

@@ -16,6 +16,7 @@ const api = {
   containers: {
     get: id => get(`/containers/${id}`),
     list: () => get("/containers/list_root"),
+    listExport: () => get("/containers/list_export/"),
     listParents: id => get(`/containers/${id}/list_parents/`),
     listChildren: id => get(`/containers/${id}/list_children/`),
     listSamples: id => get(`/containers/${id}/list_samples/`),
