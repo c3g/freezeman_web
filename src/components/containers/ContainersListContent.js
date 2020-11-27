@@ -1,22 +1,18 @@
 import React, {useEffect} from "react";
 import {connect} from "react-redux";
 import {Link} from "react-router-dom";
-import csvStringify from "csv-stringify/lib/sync";
-
-import {Button} from "antd";
 import "antd/es/button/style/css";
 import {BarcodeOutlined} from "@ant-design/icons";
 
 import AppPageHeader from "../AppPageHeader";
 import PageContent from "../PageContent";
 import PaginatedTable from "../PaginatedTable";
+import ExportButton from "../ExportButton";
 
 import api, {withToken}  from "../../utils/api"
-import {downloadFromText}  from "../../utils/download"
 import {list, listTemplateActions} from "../../modules/containers/actions";
 import {actionsToButtonList} from "../../utils/templateActions";
 
-import {ExportCSV} from "../containers/ContainersExport";
 
 const TABLE_COLUMNS = [
   {
@@ -56,23 +52,6 @@ const mapStateToProps = state => ({
 
 const actionCreators = {list, listTemplateActions};
 
-const ExportButton = ({ exportFunction }) => {
-  const onClick = () => {
-    exportFunction()
-    .then(items => {
-      const csvText = csvStringify(items, { header: true })
-      downloadFromText('containers.csv', csvText)
-    })
-  }
-
-  return (
-    <Button onClick={onClick}>
-      Export
-    </Button>
-  )
-}
-
-
 const ContainersListContent = ({
   token,
   containers,
@@ -98,6 +77,7 @@ const ContainersListContent = ({
       extra={[
         <ExportButton
           exportFunction={listExport}
+          fileName={'containers'}
         />
         ,
         ...actionsToButtonList("/containers", actions)
