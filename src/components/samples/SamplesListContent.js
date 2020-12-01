@@ -102,16 +102,10 @@ const SamplesListContent = ({
     withToken(token, api.samples.listExport)().then(res => res.data)
 
   return <>
-    <AppPageHeader title="Samples & Extractions"
-                   extra={[
-                     <ExportButton
-                       exportFunction={listExport}
-                       fileName={'samples'}
-                     />
-                     ,
-                     ...actionsToButtonList("/samples", actions)
-                   ]}
-    />
+    <AppPageHeader title="Samples & Extractions" extra={[
+      <ExportButton exportFunction={listExport} filename={'samples'}/>,
+      ...actionsToButtonList("/samples", actions)
+    ]}/>
     <PageContent>
       <PaginatedTable
         columns={TABLE_COLUMNS}

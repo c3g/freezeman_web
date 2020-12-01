@@ -1,7 +1,6 @@
 import React, {useEffect} from "react";
 import {connect} from "react-redux";
 import {Link} from "react-router-dom";
-import "antd/es/button/style/css";
 import {BarcodeOutlined} from "@ant-design/icons";
 
 import AppPageHeader from "../AppPageHeader";
@@ -72,17 +71,10 @@ const ContainersListContent = ({
     withToken(token, api.containers.listExport)().then(res => res.data)
 
   return <>
-    <AppPageHeader
-      title="Containers"
-      extra={[
-        <ExportButton
-          exportFunction={listExport}
-          fileName={'containers'}
-        />
-        ,
-        ...actionsToButtonList("/containers", actions)
-      ]}
-    />
+    <AppPageHeader title="Containers" extra={[
+      <ExportButton exportFunction={listExport} filename={'containers'}/>,
+      ...actionsToButtonList("/containers", actions)
+    ]}/>
     <PageContent>
       <PaginatedTable
         columns={TABLE_COLUMNS}
