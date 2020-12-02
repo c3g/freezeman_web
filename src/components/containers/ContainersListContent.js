@@ -72,7 +72,7 @@ const ContainersListContent = ({
 
   return <>
     <AppPageHeader title="Containers" extra={[
-      <ExportFromURLButton exportFunction={listExport} filename={'containers'}/>,
+      <ExportFromURLButton exportFunction={listExport} filename="containers"/>,
       ...actionsToButtonList("/containers", actions)
     ]}/>
     <PageContent>

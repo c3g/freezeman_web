@@ -103,7 +103,7 @@ const SamplesListContent = ({
 
   return <>
     <AppPageHeader title="Samples & Extractions" extra={[
-      <ExportFromURLButton exportFunction={listExport} filename={'samples'}/>,
+      <ExportFromURLButton exportFunction={listExport} filename="samples"/>,
       ...actionsToButtonList("/samples", actions)
     ]}/>
     <PageContent>

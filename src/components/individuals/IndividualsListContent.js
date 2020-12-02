@@ -66,7 +66,7 @@ const IndividualsListContent = ({
 
     return <>
         <AppPageHeader title="Individuals" extra={[
-            <ExportFromURLButton exportFunction={listExport} filename={'individuals'}/>,
+            <ExportFromURLButton exportFunction={listExport} filename="individuals"/>,
         ]}/>
         <PageContent>
             <PaginatedTable

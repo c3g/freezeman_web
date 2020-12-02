@@ -9,7 +9,7 @@ import { DownloadOutlined } from "@ant-design/icons";
 
 
 export const ExportFromTextButton = ({ exportFunction, filename }) => {
-  let name = filename + '_' + new Date().toISOString().slice(0,10) + '.csv'
+  let name = filename + '_' + new Date().toISOString().slice(0, 10) + '.csv'
   const onClick = () => {
     exportFunction()
       .then(res => res.data)
@@ -29,7 +29,7 @@ export const ExportFromTextButton = ({ exportFunction, filename }) => {
 
 
 export const ExportFromURLButton = ({ exportFunction, filename }) => {
-  let name = filename + '_' + new Date().toISOString().slice(0,10) + '.csv'
+  let name = filename + '_' + new Date().toISOString().slice(0, 10) + '.csv'
   const onClick = () => {
     exportFunction()
       .then(res => { downloadFromURL(res.url, name) });
