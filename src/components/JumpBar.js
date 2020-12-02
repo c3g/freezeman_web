@@ -86,9 +86,9 @@ const JumpBar = ({items, isFetching, clear, search}) => {
 
 function getPath(type, id) {
   switch (type) {
-    case 'container':  return `/containers/${id}`;
-    case 'sample':     return `/samples/${id}`;
-    case 'individual': return `/individuals/${id}`;
+    case 'container':  return `/containers/${id}?nested=True`;
+    case 'sample':     return `/samples/${id}?nested=True`;
+    case 'individual': return `/individuals/${id}?nested=True`;
     case 'user':       return `/reports/user/${id}`;
   }
   throw new Error('unreachable')
@@ -110,7 +110,7 @@ function renderContainer(container) {
       <TableOutlined />{' '}
       <strong>{container.name}</strong>{' '}
       <Text type="secondary">
-        {container.location}{container.coords ? ` @ ${container.coords}` : ''}
+        {container.location ? container.location.barcode : ''} : {container.coords ? ` @ ${container.coords}` : ''}
       </Text>{' '}
       <Text type="secondary">container</Text>{' '}
     </Option>

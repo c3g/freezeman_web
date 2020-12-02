@@ -59,7 +59,7 @@ const ContainersDetailContent = ({containersByID, get, listParents}) => {
           <Descriptions.Item label="Name" span={2}>{container.name}</Descriptions.Item>
           <Descriptions.Item label="Barcode">{container.barcode}</Descriptions.Item>
           <Descriptions.Item label="Location" span={2}>
-              {container.location || "—"}{container.coordinates ? `at ${container.coordinates}` : ""}
+              {container.location ? container.location.barcode : "—"} {container.coordinates ? `at ${container.coordinates}` : ""}
           </Descriptions.Item>
           <Descriptions.Item label="Kind">{container.kind}</Descriptions.Item>
           <Descriptions.Item label="Comment" span={3}>{container.comment}</Descriptions.Item>

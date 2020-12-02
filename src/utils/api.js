@@ -2,6 +2,7 @@ import { stringify as qs } from "querystring";
 
 import {API_BASE_PATH} from "../config";
 
+const nested = {'nested': 'True'}
 
 const api = {
   auth: {
