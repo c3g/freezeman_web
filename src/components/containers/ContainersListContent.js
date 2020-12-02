@@ -6,11 +6,11 @@ import {BarcodeOutlined} from "@ant-design/icons";
 import AppPageHeader from "../AppPageHeader";
 import PageContent from "../PageContent";
 import PaginatedTable from "../PaginatedTable";
-import ExportButton from "../ExportButton";
 
 import api, {withToken}  from "../../utils/api"
 import {list, listTemplateActions} from "../../modules/containers/actions";
 import {actionsToButtonList} from "../../utils/templateActions";
+import {ExportFromURLButton} from "../ExportButton";
 
 
 const TABLE_COLUMNS = [
@@ -68,11 +68,11 @@ const ContainersListContent = ({
   }, []);
 
   const listExport = () =>
-    withToken(token, api.containers.listExport)().then(res => res.data)
+    withToken(token, api.containers.listExport)()
 
   return <>
     <AppPageHeader title="Containers" extra={[
-      <ExportButton exportFunction={listExport} filename={'containers'}/>,
+      <ExportFromURLButton exportFunction={listExport} filename={'containers'}/>,
       ...actionsToButtonList("/containers", actions)
     ]}/>
     <PageContent>

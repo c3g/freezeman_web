@@ -3,10 +3,15 @@ import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
 import {Link} from "react-router-dom";
 
+import api, {withToken}  from "../../utils/api"
+
 import AppPageHeader from "../AppPageHeader";
 import PageContent from "../PageContent";
 import PaginatedTable from "../PaginatedTable";
 import {list} from "../../modules/individuals/actions";
+
+import {ExportFromURLButton} from "../ExportButton";
+import {actionsToButtonList} from "../../utils/templateActions";
 
 const TABLE_COLUMNS = [
     {
@@ -36,6 +41,7 @@ const TABLE_COLUMNS = [
 ];
 
 const mapStateToProps = state => ({
+    token: state.auth.tokens.access,
     individualsByID: state.individuals.itemsByID,
     individuals: state.individuals.items,
     page: state.individuals.page,
@@ -47,6 +53,7 @@ const mapDispatchToProps = dispatch =>
     bindActionCreators({ list }, dispatch);
 
 const IndividualsListContent = ({
+    token,
     individuals,
     individualsByID,
     isFetching,
@@ -54,8 +61,13 @@ const IndividualsListContent = ({
     totalCount,
     list,
 }) => {
+    const listExport = () =>
+      withToken(token, api.individuals.listExport)()
+
     return <>
-        <AppPageHeader title="Individuals" />
+        <AppPageHeader title="Individuals" extra={[
+            <ExportFromURLButton exportFunction={listExport} filename={'individuals'}/>,
+        ]}/>
         <PageContent>
             <PaginatedTable
                 columns={TABLE_COLUMNS}

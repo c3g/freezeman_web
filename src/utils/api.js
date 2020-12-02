@@ -16,7 +16,7 @@ const api = {
   containers: {
     get: id => get(`/containers/${id}`),
     list: () => get("/containers/list_root"),
-    listExport: () => get("/containers/list_export/"),
+    listExport: () => get(`/containers/list_export/`, {format: 'csv'}),
     listParents: id => get(`/containers/${id}/list_parents/`),
     listChildren: id => get(`/containers/${id}/list_children/`),
     listSamples: id => get(`/containers/${id}/list_samples/`),
@@ -31,12 +31,13 @@ const api = {
   individuals: {
     get: individualId => get(`/individuals/${individualId}`),
     list: (page = {}) => get("/individuals/", page),
+    listExport: () => get("/individuals/list_export/", {format: 'csv'}),
   },
 
   samples: {
     get: sampleId => get(`/samples/${sampleId}`),
     list: (page = {}) => get("/samples/", page),
-    listExport: () => get("/samples/list_export/"),
+    listExport: () => get("/samples/list_export/", {format: 'csv'}),
     listVersions: sampleId => get(`/samples/${sampleId}/versions`),
     summary: () => get("/samples/summary"),
     template: {
