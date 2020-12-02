@@ -97,8 +97,10 @@ const SamplesDetailContent = ({samplesByID, usersByID, get, listVersions}) => {
           <Descriptions.Item label="Depleted"><SampleDepletion depleted={sample.depleted} /></Descriptions.Item>
       </Descriptions>
       <Descriptions bordered={true} size="small" style={{marginTop: "24px"}}>
-          <Descriptions.Item label="Individual">
-              <Link to={`/individuals/${sample.individual}`}>{sample.individual}</Link>
+          <Descriptions.Item label="Individual Name">
+            {sample.individual ?
+              <Link to={`/individuals/${sample.individual.id}`}>{sample.individual.label}</Link> :
+              null}
           </Descriptions.Item>
           <Descriptions.Item label="Collection Site">{sample.collection_site}</Descriptions.Item>
           <Descriptions.Item label="Tissue Source">{sample.tissue_source}</Descriptions.Item>
@@ -109,7 +111,9 @@ const SamplesDetailContent = ({samplesByID, usersByID, get, listVersions}) => {
           <Descriptions.Item label="Phenotype">{sample.phenotype}</Descriptions.Item>
           <Descriptions.Item label="Reception Date">{sample.reception_date}</Descriptions.Item>
           <Descriptions.Item label="Container">
-              <Link to={`/containers/${sample.container}`}>{sample.container}</Link>
+            {sample.container ?
+              <Link to={`/containers/${sample.container.id}`}>{sample.container.barcode}</Link> :
+              null}
           </Descriptions.Item>
           <Descriptions.Item label="Coordinates">{sample.coordinates || "—"}</Descriptions.Item>
           <Descriptions.Item label="Comment" span={3}>{sample.comment}</Descriptions.Item>

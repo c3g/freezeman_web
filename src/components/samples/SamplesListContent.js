@@ -56,18 +56,23 @@ const SamplesListContent = ({
     {
       title: "Individual",
       dataIndex: "individual",
-      render: individual => <Link to={`/individuals/${individual}`}>{individual}</Link>,
+      render: individual =>
+        individual ?
+          <Link to={`/individuals/${individual.id}`}>{individual.label}</Link> :
+          null,
     },
     {
-      title: "Container",
+      title: "Container Name",
       dataIndex: "container",
-      render: containerID =>
-        <Link to={`/containers/${containerID}`}>
-          {containersByID[containerID] ?
-            containersByID[containerID].name :
-            containerID
-          }
-        </Link>,
+      render: container => container ? <>{container.name}</> : null,
+    },
+    {
+      title: "Container Barcode",
+      dataIndex: "container",
+      render: container =>
+        container ?
+          <Link to={`/containers/${container.id}`}>{container.barcode}</Link> :
+          null,
     },
     {
       title: "Coords",

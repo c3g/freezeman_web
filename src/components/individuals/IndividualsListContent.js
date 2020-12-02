@@ -11,8 +11,8 @@ import {list} from "../../modules/individuals/actions";
 const TABLE_COLUMNS = [
     {
         title: "Name",
-        dataIndex: "id",
-        render: id => <Link to={`/individuals/${id}`}>{id}</Link>,
+        dataIndex: "label",
+        render: (label, individual) => <Link to={`/individuals/${individual.id}`}>{label}</Link>,
     },
     {
         title: "Taxon",
@@ -61,7 +61,7 @@ const IndividualsListContent = ({
                 columns={TABLE_COLUMNS}
                 items={individuals}
                 itemsByID={individualsByID}
-                rowKey="id"
+                rowKey="label"
                 loading={isFetching}
                 totalCount={totalCount}
                 page={page}

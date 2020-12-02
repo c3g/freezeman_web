@@ -2,6 +2,7 @@ import { stringify as qs } from "querystring";
 
 import {API_BASE_PATH} from "../config";
 
+const nested = {'nested': 'True'}
 
 const api = {
   auth: {
@@ -14,10 +15,10 @@ const api = {
   },
 
   containers: {
-    get: id => get(`/containers/${id}`),
-    list: () => get("/containers/list_root"),
-    listParents: id => get(`/containers/${id}/list_parents/`),
-    listChildren: id => get(`/containers/${id}/list_children/`),
+    get: id => get(`/containers/${id}`, nested),
+    list: (page = {}) => get(`/containers/`, {...page, ...nested}),
+    listParents: id => get(`/containers/${id}/list_parents/`, nested),
+    listChildren: id => get(`/containers/${id}/list_children/`, nested),
     listSamples: id => get(`/containers/${id}/list_samples/`),
     summary: () => get("/containers/summary"),
     template: {
@@ -28,13 +29,13 @@ const api = {
   },
 
   individuals: {
-    get: individualId => get(`/individuals/${individualId}`),
-    list: (page = {}) => get("/individuals/", page),
+    get: Id => get(`/individuals/${Id}`, nested),
+    list: (page = {}) => get(`/individuals/`, {...page, ...nested}),
   },
 
   samples: {
-    get: sampleId => get(`/samples/${sampleId}`),
-    list: (page = {}) => get("/samples/", page),
+    get: sampleId => get(`/samples/${sampleId}`, nested),
+    list: (page = {}) => get(`/samples/`, {...page, ...nested}),
     listVersions: sampleId => get(`/samples/${sampleId}/versions`),
     summary: () => get("/samples/summary"),
     template: {

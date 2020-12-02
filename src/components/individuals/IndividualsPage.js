@@ -8,7 +8,7 @@ import PageContainer from "../PageContainer";
 const IndividualsPage = () => <PageContainer>
     <Switch>
         <Route path="/individuals/list"><IndividualsListContent /></Route>
-        <Route path="/individuals/:name"><IndividualsDetailContent /></Route>
+        <Route path="/individuals/:id"><IndividualsDetailContent /></Route>
         <Redirect to="/individuals/list" />
     </Switch>
 </PageContainer>;

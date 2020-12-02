@@ -13,27 +13,35 @@ import {actionsToButtonList} from "../../utils/templateActions";
 
 const TABLE_COLUMNS = [
   {
+    title: "Name",
+    dataIndex: "name",
+  },
+  {
     title: <><BarcodeOutlined style={{marginRight: "8px"}} /> Barcode</>,
     dataIndex: "barcode",
     render: (barcode, container) => <Link to={`/containers/${container.id}`}>{barcode}</Link>,
   },
   {
-    title: "Name",
-    dataIndex: "name",
+    title: "Sample",
+    dataIndex: "samples",
+    render: (samples, container) =>
+      (container.kind == "tube" && samples.length > 0) ? 
+        <Link to={`/samples/${samples[0].id}`}>{samples[0].name}</Link> : 
+        null,
   },
   {
     title: "Kind",
     dataIndex: "kind",
   },
   {
-    title: "Children",
-    dataIndex: "children",
-    align: 'right',
-    render: children => children ? children.length : null,
+    title: "Location Name",
+    dataIndex: "location",
+    render: location => location ? <>{location.name}</> : null,
   },
   {
-    title: "Co-ords.",
-    dataIndex: "coordinates",
+    title: <><BarcodeOutlined style={{marginRight: "8px"}} /> Location Barcode</>,
+    dataIndex: "location",
+    render: location => location ? <Link to={`/containers/${location.id}`}>{location.barcode}</Link> : null,
   },
 ];
 
