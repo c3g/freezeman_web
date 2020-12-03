@@ -7,11 +7,11 @@ import PageContent from "../PageContent";
 import PaginatedTable from "../PaginatedTable";
 import {SampleDepletion} from "./SampleDepletion";
 
-import api, {withToken}  from "../../utils/api"
+import api from "../../utils/api"
 
 import {list, listTemplateActions} from "../../modules/samples/actions";
 import {actionsToButtonList} from "../../utils/templateActions";
-import {ExportFromURLButton} from "../ExportButton";
+import ExportFromURLButton from "../ExportFromURLButton";
 
 const mapStateToProps = state => ({
   token: state.auth.tokens.access,
@@ -98,12 +98,10 @@ const SamplesListContent = ({
       width: 85,
     }
   ];
-  const listExport = () =>
-    withToken(token, api.samples.listExport)()
 
   return <>
     <AppPageHeader title="Samples & Extractions" extra={[
-      <ExportFromURLButton exportFunction={listExport} filename="samples"/>,
+      <ExportFromURLButton url={api.samples.listExport} token={token} filename="samples"/>,
       ...actionsToButtonList("/samples", actions)
     ]}/>
     <PageContent>
