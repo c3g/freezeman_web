@@ -11,7 +11,7 @@ import api, {withToken}  from "../../utils/api"
 
 import {list, listTemplateActions} from "../../modules/samples/actions";
 import {actionsToButtonList} from "../../utils/templateActions";
-import {ExportFromURLButton} from "../ExportButton";
+import {ExportFromTextButton} from "../ExportButton";
 
 const mapStateToProps = state => ({
   token: state.auth.tokens.access,
@@ -103,7 +103,7 @@ const SamplesListContent = ({
 
   return <>
     <AppPageHeader title="Samples & Extractions" extra={[
-      <ExportFromURLButton exportFunction={listExport} filename="samples"/>,
+      <ExportFromTextButton exportFunction={listExport} filename="samples"/>,
       ...actionsToButtonList("/samples", actions)
     ]}/>
     <PageContent>
