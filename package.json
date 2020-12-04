@@ -24,7 +24,6 @@
     "@ant-design/icons": "^4.2.1",
     "antd": "^4.4.3",
     "cross-fetch": "^3.0.6",
-    "csv-stringify": "^5.5.3",
     "date-fns": "^2.15.0",
     "fuse.js": "^6.4.0",
     "jsondiffpatch": "^0.4.1",
