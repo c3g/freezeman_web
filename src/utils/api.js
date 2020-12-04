@@ -89,13 +89,22 @@ function apiFetch(method, route, body) {
           JSON.stringify(body) :
           undefined,
     })
-    .then(attachJSON)
-    .then(response => {
-      if (response.ok) {
-        return response;
-      }
-      return Promise.reject(createAPIError(response));
-    })
+      .then(response => {
+        let contentType = response.headers.get('Content-Type') || ''
+        console.log(response.headers)
+        if (contentType.includes('application/json')) {
+          return attachJSON(response)
+            .then(response => {
+              if (response.ok) {
+                return response;
+              }
+              return Promise.reject(createAPIError(response));
+            })
+        }
+        if (contentType.includes('text/html') || contentType.includes('text/csv')) {
+          return response.text()
+        }
+      })
   };
 }
 

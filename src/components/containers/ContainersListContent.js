@@ -7,10 +7,10 @@ import AppPageHeader from "../AppPageHeader";
 import PageContent from "../PageContent";
 import PaginatedTable from "../PaginatedTable";
 
-import api from "../../utils/api"
+import api, {withToken}  from "../../utils/api"
 import {list, listTemplateActions} from "../../modules/containers/actions";
 import {actionsToButtonList} from "../../utils/templateActions";
-import ExportFromURLButton from "../ExportFromURLButton";
+import {ExportFromTextButton} from "../ExportFromTextButton";
 
 
 const TABLE_COLUMNS = [
@@ -67,9 +67,12 @@ const ContainersListContent = ({
     listTemplateActions();
   }, []);
 
+  const listExport = () =>
+    withToken(token, api.containers.listExport)()
+
   return <>
     <AppPageHeader title="Containers" extra={[
-      <ExportFromURLButton url={api.containers.listExport} token={token} filename="containers"/>,
+      <ExportFromTextButton exportFunction={listExport} filename="containers"/>,
       ...actionsToButtonList("/containers", actions)
     ]}/>
     <PageContent>

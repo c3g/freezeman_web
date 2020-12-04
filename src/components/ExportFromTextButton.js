@@ -1,20 +1,20 @@
 import React from "react";
-import {downloadFromURL} from "../utils/download";
+import {downloadFromText} from "../utils/download";
 
 import {Button} from "antd";
 import "antd/es/button/style/css";
 
 import { DownloadOutlined } from "@ant-design/icons";
-import {withToken} from "../utils/api";
 
 
-const ExportFromURLButton = ({ url, token, filename }) => {
+export const ExportFromTextButton = ({ exportFunction, filename }) => {
   let name = filename + '_' + new Date().toISOString().slice(0, 10) + '.csv'
   const onClick = () => {
-      withToken(token, url)()
-      .then(res => { downloadFromURL(res.url, name) });
+    exportFunction()
+      .then(text => {
+        downloadFromText(name, text)
+      })
   }
-
   return (
     <Button onClick={onClick}>
       <DownloadOutlined />
@@ -22,5 +22,3 @@ const ExportFromURLButton = ({ url, token, filename }) => {
     </Button>
   )
 }
-
-export default ExportFromURLButton;
