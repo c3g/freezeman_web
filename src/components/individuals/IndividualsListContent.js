@@ -3,14 +3,13 @@ import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
 import {Link} from "react-router-dom";
 
-import api, {withToken}  from "../../utils/api"
-
 import AppPageHeader from "../AppPageHeader";
 import PageContent from "../PageContent";
 import PaginatedTable from "../PaginatedTable";
-import {list} from "../../modules/individuals/actions";
-
 import ExportButton from "../ExportButton";
+import {list} from "../../modules/individuals/actions";
+import api, {withToken}  from "../../utils/api"
+
 
 const TABLE_COLUMNS = [
     {
@@ -61,7 +60,7 @@ const IndividualsListContent = ({
     list,
 }) => {
     const listExport = () =>
-      withToken(token, api.individuals.listExport)()
+      withToken(token, api.individuals.listExport)().then(response => response.data)
 
     return <>
         <AppPageHeader title="Individuals" extra={[

@@ -8,7 +8,7 @@ import { DownloadOutlined } from "@ant-design/icons";
 
 
 const ExportButton = ({ exportFunction, filename }) => {
-  let name = filename + '_' + new Date().toISOString().slice(0, 10) + '.csv'
+  const name = filename + '_' + new Date().toISOString().slice(0, 10) + '.csv'
   const onClick = () => {
     exportFunction()
       .then(text => {
