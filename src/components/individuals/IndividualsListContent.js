@@ -10,7 +10,7 @@ import PageContent from "../PageContent";
 import PaginatedTable from "../PaginatedTable";
 import {list} from "../../modules/individuals/actions";
 
-import {ExportFromTextButton} from "../ExportFromTextButton";
+import ExportButton from "../ExportButton";
 
 const TABLE_COLUMNS = [
     {
@@ -65,7 +65,7 @@ const IndividualsListContent = ({
 
     return <>
         <AppPageHeader title="Individuals" extra={[
-            <ExportFromTextButton exportFunction={listExport} filename="individuals"/>,
+            <ExportButton exportFunction={listExport} filename="individuals"/>,
         ]}/>
         <PageContent>
             <PaginatedTable

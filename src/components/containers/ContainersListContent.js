@@ -10,7 +10,7 @@ import PaginatedTable from "../PaginatedTable";
 import api, {withToken}  from "../../utils/api"
 import {list, listTemplateActions} from "../../modules/containers/actions";
 import {actionsToButtonList} from "../../utils/templateActions";
-import {ExportFromTextButton} from "../ExportFromTextButton";
+import ExportButton from "../ExportButton";
 
 
 const TABLE_COLUMNS = [
@@ -72,7 +72,7 @@ const ContainersListContent = ({
 
   return <>
     <AppPageHeader title="Containers" extra={[
-      <ExportFromTextButton exportFunction={listExport} filename="containers"/>,
+      <ExportButton exportFunction={listExport} filename="containers"/>,
       ...actionsToButtonList("/containers", actions)
     ]}/>
     <PageContent>
