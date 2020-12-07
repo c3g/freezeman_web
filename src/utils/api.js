@@ -89,22 +89,7 @@ function apiFetch(method, route, body) {
           JSON.stringify(body) :
           undefined,
     })
-      .then(response => {
-        let contentType = response.headers.get('Content-Type') || ''
-        console.log(response.headers)
-        if (contentType.includes('application/json')) {
-          return attachJSON(response)
-            .then(response => {
-              if (response.ok) {
-                return response;
-              }
-              return Promise.reject(createAPIError(response));
-            })
-        }
-        if (contentType.includes('text/html') || contentType.includes('text/csv')) {
-          return response.text()
-        }
-      })
+      .then(response => attachData(response))
   };
 }
 
@@ -140,16 +125,30 @@ function createAPIError(response) {
   return error;
 }
 
-function attachJSON(response) {
-  return response.json()
-  .then(data => {
-    response.data = data;
-    return response;
-  })
-  .catch(() => {
-    response.data = {};
-    return response;
-  })
+function attachData(response) {
+  let contentType = response.headers.get('Content-Type') || ''
+  if (contentType.includes('text/csv')){
+    return response.text()
+      .then(text => {
+        return text;
+      })
+  } else{
+    return response.json()
+      .then(data => {
+        response.data = data;
+        return response;
+      })
+      .catch(() => {
+        response.data = {};
+        return response;
+      })
+      .then(response => {
+        if(response.ok) {
+          return response;
+        }
+        return Promise.reject(createAPIError(response));
+      })
+  }
 }
 
 function form(params) {
