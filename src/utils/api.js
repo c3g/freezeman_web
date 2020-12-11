@@ -15,10 +15,10 @@ const api = {
   },
 
   containers: {
-    get: id => get(`/containers/${id}`, nested),
-    list: (page = {}) => get(`/containers/`, {...page, ...nested}),
-    listParents: id => get(`/containers/${id}/list_parents/`, nested),
-    listChildren: id => get(`/containers/${id}/list_children/`, nested),
+    get: id => get(`/containers/${id}`),
+    list: (page = {}) => get(`/containers/`, page),
+    listParents: id => get(`/containers/${id}/list_parents/`),
+    listChildren: id => get(`/containers/${id}/list_children/`),
     listSamples: id => get(`/containers/${id}/list_samples/`),
     summary: () => get("/containers/summary"),
     template: {
@@ -29,13 +29,13 @@ const api = {
   },
 
   individuals: {
-    get: Id => get(`/individuals/${Id}`, nested),
-    list: (page = {}) => get(`/individuals/`, {...page, ...nested}),
+    get: id => get(`/individuals/${id}`),
+    list: (page = {}) => get(`/individuals/`, page),
   },
 
   samples: {
-    get: sampleId => get(`/samples/${sampleId}`, nested),
-    list: (page = {}) => get(`/samples/`, {...page, ...nested}),
+    get: sampleId => get(`/samples/${sampleId}`),
+    list: (page = {}) => get(`/samples/`, page),
     listVersions: sampleId => get(`/samples/${sampleId}/versions`),
     summary: () => get("/samples/summary"),
     template: {

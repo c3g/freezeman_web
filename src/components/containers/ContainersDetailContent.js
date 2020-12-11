@@ -1,6 +1,6 @@
 import React from "react";
 import {connect} from "react-redux";
-import {useHistory, useParams} from "react-router-dom";
+import {useHistory, useParams, Link} from "react-router-dom";
 
 import {Descriptions, Tag} from "antd";
 import "antd/es/descriptions/style/css";
@@ -11,7 +11,8 @@ import {BarcodeOutlined} from "@ant-design/icons";
 import AppPageHeader from "../AppPageHeader";
 import ContainerHierarchy from "./ContainerHierarchy";
 import PageContent from "../PageContent";
-import {get, listParents} from "../../modules/containers/actions";
+import {get, listParents, listSamples} from "../../modules/containers/actions";
+import withNestedField from "../../utils/withNestedField"
 
 const extraStyle = {
   display: "flex",
@@ -59,7 +60,14 @@ const ContainersDetailContent = ({containersByID, get, listParents}) => {
           <Descriptions.Item label="Name" span={2}>{container.name}</Descriptions.Item>
           <Descriptions.Item label="Barcode">{container.barcode}</Descriptions.Item>
           <Descriptions.Item label="Location" span={2}>
-              {container.location ? container.location.barcode : "—"} {container.coordinates ? `at ${container.coordinates}` : ""}
+            {container.location ?
+              <Link to={`/containers/${container.location}`}>
+                {withNestedField("container", "barcode", containersByID, container.location)}
+              </Link>
+              : "—"}
+            {container.coordinates ?
+              ` at ${container.coordinates}` 
+              : ""}
           </Descriptions.Item>
           <Descriptions.Item label="Kind">{container.kind}</Descriptions.Item>
           <Descriptions.Item label="Comment" span={3}>{container.comment}</Descriptions.Item>

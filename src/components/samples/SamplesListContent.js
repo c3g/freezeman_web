@@ -8,30 +8,37 @@ import PaginatedTable from "../PaginatedTable";
 import {SampleDepletion} from "./SampleDepletion";
 
 import {list, listTemplateActions} from "../../modules/samples/actions";
+import {get as getIndividual} from "../../modules/individuals/actions";
+import {get as getContainer} from "../../modules/containers/actions";
 import {actionsToButtonList} from "../../utils/templateActions";
+import withNestedField from "../../utils/withNestedField";
 
 const mapStateToProps = state => ({
   samplesByID: state.samples.itemsByID,
   samples: state.samples.items,
   containersByID: state.containers.itemsByID,
+  individualsByID: state.individuals.itemsByID,
   actions: state.sampleTemplateActions,
   page: state.samples.page,
   totalCount: state.samples.totalCount,
   isFetching: state.samples.isFetching,
 });
 
-const actionCreators = {list, listTemplateActions};
+const actionCreators = {list, listTemplateActions, getIndividual, getContainer};
 
 const SamplesListContent = ({
   samples,
   samplesByID,
   containersByID,
+  individualsByID,
   actions,
   isFetching,
   page,
   totalCount,
   list,
   listTemplateActions,
+  getIndividual,
+  getContainer,
 }) => {
   useEffect(() => {
     // Must be wrapped; effects cannot return promises
@@ -58,20 +65,24 @@ const SamplesListContent = ({
       dataIndex: "individual",
       render: individual =>
         individual ?
-          <Link to={`/individuals/${individual.id}`}>{individual.label}</Link> :
+          <Link to={`/individuals/${individual}`}>
+            {withNestedField(getIndividual, "label", individualsByID, individual, "loading...")}
+          </Link> :
           null,
     },
     {
       title: "Container Name",
       dataIndex: "container",
-      render: container => container ? <>{container.name}</> : null,
+      render: container => container ? withNestedField(getContainer, "name", containersByID, container, "loading...") : null,
     },
     {
       title: "Container Barcode",
       dataIndex: "container",
       render: container =>
         container ?
-          <Link to={`/containers/${container.id}`}>{container.barcode}</Link> :
+          <Link to={`/containers/${container}`}>
+            {withNestedField(getContainer, "barcode", containersByID, container, "loading...")}
+          </Link> :
           null,
     },
     {
