@@ -86,9 +86,9 @@ const JumpBar = ({items, isFetching, clear, search}) => {
 
 function getPath(type, id) {
   switch (type) {
-    case 'container':  return `/containers/${id}?nested=True`;
-    case 'sample':     return `/samples/${id}?nested=True`;
-    case 'individual': return `/individuals/${id}?nested=True`;
+    case 'container':  return `/containers/${id}`;
+    case 'sample':     return `/samples/${id}`;
+    case 'individual': return `/individuals/${id}`;
     case 'user':       return `/reports/user/${id}`;
   }
   throw new Error('unreachable')
@@ -136,7 +136,7 @@ function renderIndividual(individual) {
   return (
     <Option key={'individual_' + individual.id}>
       <NodeIndexOutlined />{' '}
-      <strong>{individual.id}</strong>{' '}
+      <strong>{individual.label}</strong>{' '}
       <Text type="secondary">individual</Text>{' '}
     </Option>
   );

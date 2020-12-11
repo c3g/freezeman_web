@@ -12,12 +12,14 @@ import api, {withToken}  from "../../utils/api"
 
 import {list} from "../../modules/samples/actions";
 import {actionsToButtonList} from "../../utils/templateActions";
+import withNestedField from "../../utils/withNestedField";
 
 const mapStateToProps = state => ({
   token: state.auth.tokens.access,
   samplesByID: state.samples.itemsByID,
   samples: state.samples.items,
   containersByID: state.containers.itemsByID,
+  individualsByID: state.individuals.itemsByID,
   actions: state.sampleTemplateActions,
   page: state.samples.page,
   totalCount: state.samples.totalCount,
@@ -31,6 +33,7 @@ const SamplesListContent = ({
   samples,
   samplesByID,
   containersByID,
+  individualsByID,
   actions,
   isFetching,
   page,
@@ -57,20 +60,24 @@ const SamplesListContent = ({
       dataIndex: "individual",
       render: individual =>
         individual ?
-          <Link to={`/individuals/${individual.id}`}>{individual.label}</Link> :
+          <Link to={`/individuals/${individual}`}>
+            {withNestedField(getIndividual, "label", individualsByID, individual, "loading...")}
+          </Link> :
           null,
     },
     {
       title: "Container Name",
       dataIndex: "container",
-      render: container => container ? <>{container.name}</> : null,
+      render: container => container ? withNestedField(getContainer, "name", containersByID, container, "loading...") : null,
     },
     {
       title: "Container Barcode",
       dataIndex: "container",
       render: container =>
         container ?
-          <Link to={`/containers/${container.id}`}>{container.barcode}</Link> :
+          <Link to={`/containers/${container}`}>
+            {withNestedField(getContainer, "barcode", containersByID, container, "loading...")}
+          </Link> :
           null,
     },
     {

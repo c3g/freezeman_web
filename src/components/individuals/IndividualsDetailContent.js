@@ -11,6 +11,7 @@ import "antd/es/spin/style/css";
 import AppPageHeader from "../AppPageHeader";
 import PageContent from "../PageContent";
 import { get } from "../../modules/individuals/actions";
+import withNestedField from "../../utils/withNestedField"
 
 const IndividualsDetailContent = ({individualsByID, get}) => {
     const history = useHistory();
@@ -34,14 +35,22 @@ const IndividualsDetailContent = ({individualsByID, get}) => {
                 <Descriptions.Item label="Pedigree">{individual.pedigree}</Descriptions.Item>
                 <Descriptions.Item label="Cohort" span={2}>{individual.cohort}</Descriptions.Item>
                 <Descriptions.Item label="Mother">
-                    {individual.mother
-                        ? (<Link to={`/individuals/${individual.mother.id}`}>{individual.mother.label}</Link>)
-                        : "—"}
+                    {individual.mother ?
+                        (
+                        <Link to={`/individuals/${individual.mother}`}>
+                            {withNestedField(get, "label", individualsByID, individual.mother, "Loading...")}
+                        </Link>
+                        ) :
+                        "—"}
                 </Descriptions.Item>
                 <Descriptions.Item label="Father">
-                    {individual.father
-                        ? (<Link to={`/individuals/${individual.father.id}`}>{individual.father.label}</Link>)
-                        : "—"}
+                    {individual.father ?
+                        (
+                        <Link to={`/individuals/${individual.father}`}>
+                            {withNestedField(get, "label", individualsByID, individual.father, "Loading...")}
+                        </Link>
+                        ) :
+                        "—"}
                 </Descriptions.Item>
             </Descriptions>
         </PageContent>
