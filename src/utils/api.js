@@ -15,8 +15,8 @@ const api = {
   },
 
   containers: {
-    get: id => get(`/containers/${id}`),
-    list: () => get("/containers/list_root"),
+    get: id => get(`/containers/${id}/`),
+    list: () => get("/containers/"),
     listExport: () => get("/containers/list_export/", {format: "csv"}),
     listParents: id => get(`/containers/${id}/list_parents/`),
     listChildren: id => get(`/containers/${id}/list_children/`),
@@ -30,17 +30,17 @@ const api = {
   },
 
   individuals: {
-    get: individualId => get(`/individuals/${individualId}`),
+    get: individualId => get(`/individuals/${individualId}/`),
     list: (page = {}) => get("/individuals/", page),
     listExport: () => get("/individuals/list_export/", {format: "csv"}),
   },
 
   samples: {
-    get: sampleId => get(`/samples/${sampleId}`),
+    get: sampleId => get(`/samples/${sampleId}/`),
     list: (page = {}) => get("/samples/", page),
     listExport: () => get("/samples/list_export/", {format: "csv"}),
-    listVersions: sampleId => get(`/samples/${sampleId}/versions`),
-    summary: () => get("/samples/summary"),
+    listVersions: sampleId => get(`/samples/${sampleId}/versions/`),
+    summary: () => get("/samples/summary/"),
     template: {
       actions: () => get(`/samples/template_actions/`),
       check:  (action, template) => post(`/samples/template_check/`, form({ action, template })),
