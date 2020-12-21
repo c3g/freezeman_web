@@ -71,6 +71,9 @@ export const withIndividual = (id, fn, defaultValue = null) => {
     return defaultValue
   }
 
+  if (individual.isFetching)
+    return defaultValue
+
   return fn(individual)
 }
 
