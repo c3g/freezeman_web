@@ -70,6 +70,7 @@ const mapStateToProps = state => ({
   page: state.containers.page,
   totalCount: state.containers.totalCount,
   isFetching: state.containers.isFetching,
+  samplesByID: state.samples.itemsByID,
 });
 
 const actionCreators = {list};
