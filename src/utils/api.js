@@ -2,8 +2,6 @@ import { stringify as qs } from "querystring";
 
 import {API_BASE_PATH} from "../config";
 
-const nested = {'nested': 'True'}
-
 const api = {
   auth: {
     token: credentials => post("/token/", credentials),
@@ -16,7 +14,7 @@ const api = {
 
   containers: {
     get: id => get(`/containers/${id}/`),
-    list: () => get("/containers/"),
+    list: (page = {}) => get("/containers/", page),
     listExport: () => get("/containers/list_export/", {format: "csv"}),
     listParents: id => get(`/containers/${id}/list_parents/`),
     listChildren: id => get(`/containers/${id}/list_children/`),

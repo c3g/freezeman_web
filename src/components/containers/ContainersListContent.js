@@ -19,7 +19,6 @@ const mapStateToProps = state => ({
   token: state.auth.tokens.access,
   containersByID: state.containers.itemsByID,
   containers: state.containers.items,
-  samplesByID: state.samples.itemsByID,
   actions: state.containerTemplateActions,
   page: state.containers.page,
   totalCount: state.containers.totalCount,
@@ -56,7 +55,7 @@ const ContainersListContent = ({
       title: "Sample",
       dataIndex: "samples",
       render: (samples, container) =>
-        (CONTAINER_KIND_SHOW_SAMPLE.includes(container.kind) && samples.length > 0) ? 
+        ((CONTAINER_KIND_SHOW_SAMPLE.includes(container.kind) && samples.length > 0) && 
           <div>
             <ul>{samples.map(sample =>
               <li key={sample}>
@@ -65,8 +64,8 @@ const ContainersListContent = ({
                 </Link>
               </li>)}
             </ul>
-          </div> : 
-          null,
+          </div>
+         ),
     },
     {
       title: "Kind",

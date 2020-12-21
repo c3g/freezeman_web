@@ -110,7 +110,7 @@ function renderContainer(container) {
       <TableOutlined />{' '}
       <strong>{container.name}</strong>{' '}
       <Text type="secondary">
-        {container.location ? container.location.barcode : ''} : {container.coords ? ` @ ${container.coords}` : ''}
+        {container.location && container.location.barcode} : {container.coords && ` @ ${container.coords}`}
       </Text>{' '}
       <Text type="secondary">container</Text>{' '}
     </Option>
