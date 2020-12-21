@@ -14,9 +14,8 @@ export const setStore = value => { store = value }
  * @param {any} [defaultValue = null] 
  */
 export const withContainer = (id, fn, defaultValue = null) => {
-  if (!id) {
+  if (!id)
     return defaultValue
-  }
 
   const container = store.getState().containers.itemsByID[id]
 
@@ -24,6 +23,9 @@ export const withContainer = (id, fn, defaultValue = null) => {
     store.dispatch(Container.get(id))      
     return defaultValue
   }
+
+  if (container.isFetching)
+    return defaultValue
 
   return fn(container)
 }
@@ -35,9 +37,8 @@ export const withContainer = (id, fn, defaultValue = null) => {
  * @param {any} [defaultValue = null] 
  */
 export const withSample = (id, fn, defaultValue = null) => {
-  if (!id) {
+  if (!id)
     return defaultValue
-  }
 
   const sample = store.getState().samples.itemsByID[id]
 
@@ -45,6 +46,9 @@ export const withSample = (id, fn, defaultValue = null) => {
     store.dispatch(Sample.get(id))      
     return defaultValue
   }
+
+  if (sample.isFetching)
+    return defaultValue
 
   return fn(sample)
 }
