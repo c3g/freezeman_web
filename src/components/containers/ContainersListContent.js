@@ -34,7 +34,7 @@ const TABLE_COLUMNS = [
           {samples.map((id, i) =>
             <React.Fragment key={id}>
               <Link to={`/samples/${id}`}>
-                {withSample(id, sample => sample.name, "Loading...")}
+                {withSample(id, sample => sample.name, <small>Loading...</small>)}
               </Link>
               {i !== samples.length - 1 ? ', ' : ''}
             </React.Fragment>
