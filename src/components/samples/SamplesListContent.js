@@ -12,14 +12,12 @@ import api, {withToken}  from "../../utils/api"
 
 import {list} from "../../modules/samples/actions";
 import {actionsToButtonList} from "../../utils/templateActions";
-import withNestedField from "../../utils/withNestedField";
+import {withContainer, withIndividual} from "../../utils/withItem";
 
 const mapStateToProps = state => ({
   token: state.auth.tokens.access,
   samplesByID: state.samples.itemsByID,
   samples: state.samples.items,
-  containersByID: state.containers.itemsByID,
-  individualsByID: state.individuals.itemsByID,
   actions: state.sampleTemplateActions,
   page: state.samples.page,
   totalCount: state.samples.totalCount,
@@ -32,8 +30,6 @@ const SamplesListContent = ({
   token,
   samples,
   samplesByID,
-  containersByID,
-  individualsByID,
   actions,
   isFetching,
   page,
@@ -58,27 +54,23 @@ const SamplesListContent = ({
     {
       title: "Individual",
       dataIndex: "individual",
-      render: individual =>
-        individual ?
+      render: individual => (individual &&
           <Link to={`/individuals/${individual}`}>
-            {withNestedField(getIndividual, "label", individualsByID, individual, "loading...")}
-          </Link> :
-          null,
+            {withIndividual(individual, individual => individual.label, "loading...")}
+          </Link>),
     },
     {
       title: "Container Name",
       dataIndex: "container",
-      render: container => container ? withNestedField(getContainer, "name", containersByID, container, "loading...") : null,
+      render: container => (container && withContainer(container, container => container.name, "loading...")),
     },
     {
       title: "Container Barcode",
       dataIndex: "container",
-      render: container =>
-        container ?
+      render: container => (container &&
           <Link to={`/containers/${container}`}>
-            {withNestedField(getContainer, "barcode", containersByID, container, "loading...")}
-          </Link> :
-          null,
+            {withContainer(container, container => container.barcode, "loading...")}
+          </Link>),
     },
     {
       title: "Coords",

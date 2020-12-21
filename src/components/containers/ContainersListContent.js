@@ -11,7 +11,7 @@ import ExportButton from "../ExportButton";
 import {list} from "../../modules/containers/actions";
 import api, {withToken}  from "../../utils/api"
 import {actionsToButtonList} from "../../utils/templateActions";
-import withNestedField from "../../utils/withNestedField";
+import {withContainer, withSample} from "../../utils/withItem";
 
 const CONTAINER_KIND_SHOW_SAMPLE = ["tube"]
 
@@ -19,7 +19,6 @@ const mapStateToProps = state => ({
   token: state.auth.tokens.access,
   containersByID: state.containers.itemsByID,
   containers: state.containers.items,
-  samplesByID: state.samples.itemsByID,
   actions: state.containerTemplateActions,
   page: state.containers.page,
   totalCount: state.containers.totalCount,
@@ -32,7 +31,6 @@ const ContainersListContent = ({
   token,
   containers,
   containersByID,
-  samplesByID,
   actions,
   isFetching,
   page,
@@ -62,7 +60,7 @@ const ContainersListContent = ({
             <ul>{samples.map(sample =>
               <li key={sample}>
                 <Link to={`/samples/${sample}`}>
-                  {withNestedField(getSample, "name", samplesByID, sample, "Loading...")}
+                  {withSample(sample, sample => sample.name, "Loading...")}
                 </Link>
               </li>)}
             </ul>
@@ -76,16 +74,15 @@ const ContainersListContent = ({
     {
       title: "Location Name",
       dataIndex: "location",
-      render: location => location ? withNestedField(getContainer, "name", containersByID, location, "Loading...") : null,
+      render: location => (location && withContainer(location, container => container.name, "Loading...")),
     },
     {
       title: <><BarcodeOutlined style={{marginRight: "8px"}} /> Location Barcode</>,
       dataIndex: "location",
-      render: location => location ?
+      render: location => (location &&
         <Link to={`/containers/${location}`}>
-          {withNestedField(getContainer, "barcode", containersByID, location, "Loading...")}
-        </Link> :
-        null,
+          {withContainer(location, container => container.barcode, "Loading...")}
+        </Link>),
     },
   ];
 

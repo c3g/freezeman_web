@@ -21,9 +21,7 @@ import PageContent from "../PageContent";
 import ErrorMessage from "../ErrorMessage";
 import {SampleDepletion} from "./SampleDepletion";
 import {get as getSample, listVersions} from "../../modules/samples/actions";
-import {get as getIndividual} from "../../modules/individuals/actions";
-import {get as getContainer} from "../../modules/containers/actions";
-import withNestedField from "../../utils/withNestedField";
+import {withContainer, withSample, withIndividual} from "../../utils/withItem";
 
 const { Title, Text } = Typography;
 
@@ -45,9 +43,9 @@ const mapStateToProps = state => ({
   usersByID: state.users.itemsByID,
 });
 
-const actionCreators = {getSample, listVersions, getIndividual, getContainer};
+const actionCreators = {getSample, listVersions};
 
-const SamplesDetailContent = ({samplesByID, containersByID, individualsByID, usersByID, getSample, listVersions, getIndividual, getContainer}) => {
+const SamplesDetailContent = ({samplesByID, containersByID, individualsByID, usersByID, getSample, listVersions}) => {
   const history = useHistory();
   const {id} = useParams();
 
@@ -102,11 +100,11 @@ const SamplesDetailContent = ({samplesByID, containersByID, individualsByID, use
       </Descriptions>
       <Descriptions bordered={true} size="small" style={{marginTop: "24px"}}>
         <Descriptions.Item label="Individual Name">
-            {sample.individual ?
+            {sample.individual &&
               <Link to={`/individuals/${sample.individual}`}>
-                {withNestedField(getIndividual, "label", individualsByID, sample.individual, "Loading...")}
-              </Link> :
-              null}
+                {withIndividual(sample.individual, individual => individual.label, "Loading...")}
+              </Link>
+            }
           </Descriptions.Item>
           <Descriptions.Item label="Collection Site">{sample.collection_site}</Descriptions.Item>
           <Descriptions.Item label="Tissue Source">{sample.tissue_source}</Descriptions.Item>
@@ -117,11 +115,11 @@ const SamplesDetailContent = ({samplesByID, containersByID, individualsByID, use
           <Descriptions.Item label="Phenotype">{sample.phenotype}</Descriptions.Item>
           <Descriptions.Item label="Reception Date">{sample.reception_date}</Descriptions.Item>
           <Descriptions.Item label="Container">
-            {sample.container ?
+            {sample.container &&
               <Link to={`/containers/${sample.container}`}>
-                {withNestedField(getContainer, "barcode", containersByID, sample.container, "Loading...")}
-              </Link> :
-              null}
+                {withContainer(sample.container, container => container.barcode, "Loading...")}
+              </Link>
+            }
           </Descriptions.Item>
           <Descriptions.Item label="Coordinates">{sample.coordinates || "—"}</Descriptions.Item>
           <Descriptions.Item label="Comment" span={3}>{sample.comment}</Descriptions.Item>
@@ -133,18 +131,15 @@ const SamplesDetailContent = ({samplesByID, containersByID, individualsByID, use
         <Descriptions bordered={true} size="small" title="Extraction Details" style={{marginTop: "24px"}}>
           <Descriptions.Item label="Extracted From">
             <Link to={`/samples/${sample.extracted_from}`}>
-              {withNestedField(getSample, "name", samplesByID, sample.extracted_from, "Loading...")}
+              {withSample(sample.extracted_from, sample => sample.name, "Loading...")}
             </Link> 
             {" "}(
-            {withNestedField(
-              getContainer,
-              "barcode",
-              containersByID,
-              withNestedField(getSample, "container", samplesByID, sample.extracted_from),
+            {withContainer(
+              withSample(sample.extracted_from, sample => sample.container),
+              container => container.barcode,
               "... ")}
-            {withNestedField(getSample, "coordinates", samplesByID, sample.extracted_from) ?
-              ` at ${withNestedField(getSample, "coordinates", samplesByID, sample.extracted_from)}` :
-              ""}
+            {withSample(sample.extracted_from, sample => sample.coordinates) &&
+              ` at ${withSample(sample.extracted_from, sample => sample.coordinates)}`}
             )
           </Descriptions.Item>
           <Descriptions.Item label="Volume Used">{volumeUsed}</Descriptions.Item>

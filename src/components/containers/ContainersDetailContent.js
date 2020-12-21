@@ -11,8 +11,8 @@ import {BarcodeOutlined} from "@ant-design/icons";
 import AppPageHeader from "../AppPageHeader";
 import ContainerHierarchy from "./ContainerHierarchy";
 import PageContent from "../PageContent";
-import {get, listParents, listSamples} from "../../modules/containers/actions";
-import withNestedField from "../../utils/withNestedField"
+import {get, listParents} from "../../modules/containers/actions";
+import {withContainer} from "../../utils/withItem";
 
 const extraStyle = {
   display: "flex",
@@ -62,12 +62,10 @@ const ContainersDetailContent = ({containersByID, get, listParents}) => {
           <Descriptions.Item label="Location" span={2}>
             {container.location ?
               <Link to={`/containers/${container.location}`}>
-                {withNestedField("container", "barcode", containersByID, container.location)}
+                {withContainer(container.location, container => container.barcode, "Loading...")}
               </Link>
               : "—"}
-            {container.coordinates ?
-              ` at ${container.coordinates}` 
-              : ""}
+            {container.coordinates && ` at ${container.coordinates}`}
           </Descriptions.Item>
           <Descriptions.Item label="Kind">{container.kind}</Descriptions.Item>
           <Descriptions.Item label="Comment" span={3}>{container.comment}</Descriptions.Item>

@@ -11,7 +11,7 @@ import "antd/es/spin/style/css";
 import AppPageHeader from "../AppPageHeader";
 import PageContent from "../PageContent";
 import { get } from "../../modules/individuals/actions";
-import withNestedField from "../../utils/withNestedField"
+import {withIndividual} from "../../utils/withItem";
 
 const IndividualsDetailContent = ({individualsByID, get}) => {
     const history = useHistory();
@@ -38,7 +38,7 @@ const IndividualsDetailContent = ({individualsByID, get}) => {
                     {individual.mother ?
                         (
                         <Link to={`/individuals/${individual.mother}`}>
-                            {withNestedField(get, "label", individualsByID, individual.mother, "Loading...")}
+                            {withIndividual(individual.mother, individual => individual.label, "Loading...")}
                         </Link>
                         ) :
                         "—"}
@@ -47,7 +47,7 @@ const IndividualsDetailContent = ({individualsByID, get}) => {
                     {individual.father ?
                         (
                         <Link to={`/individuals/${individual.father}`}>
-                            {withNestedField(get, "label", individualsByID, individual.father, "Loading...")}
+                            {withIndividual(individual.father, individual => individual.label, "Loading...")}
                         </Link>
                         ) :
                         "—"}

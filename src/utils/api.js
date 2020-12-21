@@ -21,7 +21,7 @@ const api = {
     listParents: id => get(`/containers/${id}/list_parents/`),
     listChildren: id => get(`/containers/${id}/list_children/`),
     listSamples: id => get(`/containers/${id}/list_samples/`),
-    summary: () => get("/containers/summary"),
+    summary: () => get("/containers/summary/"),
     template: {
       actions: () => get(`/containers/template_actions/`),
       check:  (action, template) => post(`/containers/template_check/`, form({ action, template })),
