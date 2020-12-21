@@ -15,6 +15,53 @@ import {withContainer, withSample} from "../../utils/withItem";
 
 const CONTAINER_KIND_SHOW_SAMPLE = ["tube"]
 
+const TABLE_COLUMNS = [
+  {
+    title: "Name",
+    dataIndex: "name",
+  },
+  {
+    title: <><BarcodeOutlined style={{marginRight: "8px"}} /> Barcode</>,
+    dataIndex: "barcode",
+    render: (barcode, container) => <Link to={`/containers/${container.id}`}>{barcode}</Link>,
+  },
+  {
+    title: "Sample",
+    dataIndex: "samples",
+    render: (samples, container) =>
+      (CONTAINER_KIND_SHOW_SAMPLE.includes(container.kind) && samples.length > 0 && 
+        <>
+          {samples.map((id, i) =>
+            <React.Fragment key={id}>
+              <Link to={`/samples/${id}`}>
+                {withSample(id, sample => sample.name, "Loading...")}
+              </Link>
+              {i !== samples.length - 1 ? ', ' : ''}
+            </React.Fragment>
+          )}
+        </>
+        ),
+  },
+  {
+    title: "Kind",
+    dataIndex: "kind",
+  },
+  {
+    title: "Location Name",
+    dataIndex: "location",
+    render: location => (location && withContainer(location, container => container.name, "Loading...")),
+  },
+  {
+    title: <><BarcodeOutlined style={{marginRight: "8px"}} /> Location Barcode</>,
+    dataIndex: "location",
+    render: location => (location &&
+      <Link to={`/containers/${location}`}>
+        {withContainer(location, container => container.barcode, "Loading...")}
+      </Link>),
+  },
+];
+
+
 const mapStateToProps = state => ({
   token: state.auth.tokens.access,
   containersByID: state.containers.itemsByID,
@@ -40,51 +87,6 @@ const ContainersListContent = ({
 
   const listExport = () =>
     withToken(token, api.containers.listExport)().then(response => response.data)
-
-  const TABLE_COLUMNS = [
-    {
-      title: "Name",
-      dataIndex: "name",
-    },
-    {
-      title: <><BarcodeOutlined style={{marginRight: "8px"}} /> Barcode</>,
-      dataIndex: "barcode",
-      render: (barcode, container) => <Link to={`/containers/${container.id}`}>{barcode}</Link>,
-    },
-    {
-      title: "Sample",
-      dataIndex: "samples",
-      render: (samples, container) =>
-        ((CONTAINER_KIND_SHOW_SAMPLE.includes(container.kind) && samples.length > 0) && 
-          <div>
-            <ul>{samples.map(sample =>
-              <li key={sample}>
-                <Link to={`/samples/${sample}`}>
-                  {withSample(sample, sample => sample.name, "Loading...")}
-                </Link>
-              </li>)}
-            </ul>
-          </div>
-         ),
-    },
-    {
-      title: "Kind",
-      dataIndex: "kind",
-    },
-    {
-      title: "Location Name",
-      dataIndex: "location",
-      render: location => (location && withContainer(location, container => container.name, "Loading...")),
-    },
-    {
-      title: <><BarcodeOutlined style={{marginRight: "8px"}} /> Location Barcode</>,
-      dataIndex: "location",
-      render: location => (location &&
-        <Link to={`/containers/${location}`}>
-          {withContainer(location, container => container.barcode, "Loading...")}
-        </Link>),
-    },
-  ];
 
   return <>
     <AppPageHeader title="Containers" extra={[
