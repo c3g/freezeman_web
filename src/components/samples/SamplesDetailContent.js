@@ -71,14 +71,21 @@ const SamplesDetailContent = ({samplesByID, containersByID, individualsByID, use
     listVersions(sample.id);
 
   return <>
-    <AppPageHeader title={sample.name || `Sample ${id}`} onBack={history.goBack} extra={isLoaded ? [
-        <div key="kind" style={{display: "inline-block", verticalAlign: "top", marginTop: "4px"}}>
-            <Tag>{sample.biospecimen_type}</Tag>
-        </div>,
-        <div key="depleted" style={depletedStyle}>
-            <Tag color={sample.depleted ? "red" : "green"}>{sample.depleted ? "" : "NOT "}DEPLETED</Tag>
-        </div>,
-    ] : []} />
+    <AppPageHeader
+      title={sample.name || `Sample ${id}`}
+      onBack={() => history.push("/samples/list")}
+      extra={isLoaded ?
+        <Space>
+          <div key="kind" style={{display: "inline-block", verticalAlign: "top", marginTop: "4px"}}>
+              <Tag>{sample.biospecimen_type}</Tag>
+          </div>
+          <div key="depleted" style={depletedStyle}>
+              <Tag color={sample.depleted ? "red" : "green"}>{sample.depleted ? "" : "NOT "}DEPLETED</Tag>
+          </div>
+          <EditButton url={`/samples/${id}/update`} />
+        </Space>
+      : []}
+    />
     <PageContent loading={isFetching}>
       {error &&
         <ErrorMessage error={error} />
@@ -158,15 +165,20 @@ const SamplesDetailContent = ({samplesByID, containersByID, individualsByID, use
                     {versions === undefined && isFetching &&
                       <Timeline.Item dot={<LoadingOutlined />} label=" ">Loading...</Timeline.Item>
                     }
-                    {versions && versions.map((version, i) =>
-                      <Timeline.Item
-                        key={i}
-                        label={renderTimelineLabel(version, usersByID)}
-                      >
-                        <strong>{version.revision.comment}</strong>
-                        {renderSampleDiff(versions[i + 1], version)}
-                      </Timeline.Item>
-                    )}
+                    {versions && versions.map((version, i) => {
+                      const diff = renderSampleDiff(versions[i + 1], version);
+                      if (!diff)
+                        return diff;
+                      return (
+                        <Timeline.Item
+                          key={i}
+                          label={renderTimelineLabel(version, usersByID)}
+                        >
+                          <strong>{version.revision.comment}</strong>
+                          {diff}
+                        </Timeline.Item>
+                      )
+                    })}
                   </Timeline>
               }
             </Card>
