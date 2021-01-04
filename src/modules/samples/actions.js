@@ -8,6 +8,7 @@ export const GET                   = createNetworkActionTypes("SAMPLES.GET");
 export const ADD                   = createNetworkActionTypes("SAMPLES.ADD");
 export const UPDATE                = createNetworkActionTypes("SAMPLES.UPDATE");
 export const LIST                  = createNetworkActionTypes("SAMPLES.LIST");
+export const SET_SORT_BY           = "SAMPLES.SET_SORT_BY";
 export const SET_FILTER            = "SAMPLES.SET_FILTER";
 export const CLEAR_FILTERS         = "SAMPLES.CLEAR_FILTERS";
 export const LIST_VERSIONS         = createNetworkActionTypes("SAMPLES.LIST_VERSIONS");
@@ -34,6 +35,13 @@ export const update = (id, sample) => async (dispatch, getState) => {
         return;
 
     return await dispatch(networkAction(UPDATE, api.samples.update(sample), { meta: { id } }));
+};
+
+export const setSortBy = (key, order) => {
+    return {
+        type: SET_SORT_BY,
+        data: { key, order }
+    }
 };
 
 export const setFilter = (name, value) => {
@@ -84,6 +92,7 @@ export default {
     GET,
     ADD,
     UPDATE,
+    SET_SORT_BY,
     SET_FILTER,
     CLEAR_FILTERS,
     LIST,
@@ -93,6 +102,7 @@ export default {
     get,
     add,
     update,
+    setSortBy,
     setFilter,
     clearFilters,
     list,
