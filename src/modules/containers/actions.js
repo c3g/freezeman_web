@@ -1,6 +1,7 @@
 import {createNetworkActionTypes, networkAction} from "../../utils/actions";
 import api from "../../utils/api"
 import serializeFilterParams from "../../utils/serializeFilterParams";
+import serializeSortByParams from "../../utils/serializeSortByParams";
 import {CONTAINER_FILTERS} from "../../components/filters/descriptions";
 import {DEFAULT_PAGINATION_LIMIT} from "../../config";
 
@@ -64,9 +65,10 @@ export const list = ({ offset = 0, limit = DEFAULT_PAGINATION_LIMIT } = {}) => a
     if (getState().containers.isFetching)
         return;
 
-    const containersFilters = getState().containers.filters
-    const filters = serializeFilterParams(containersFilters, CONTAINER_FILTERS)
-    const options = { limit, offset, ...filters}
+    const containers = getState().containers
+    const filters = serializeFilterParams(containers.filters, CONTAINER_FILTERS)
+    const ordering = serializeSortByParams(containers.sortBy)
+    const options = { limit, offset, ordering, ...filters}
 
     return await dispatch(networkAction(LIST,
         api.containers.list(options),

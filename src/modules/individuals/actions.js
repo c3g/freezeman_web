@@ -1,4 +1,5 @@
 import {createNetworkActionTypes, networkAction} from "../../utils/actions";
+import serializeSortByParams from "../../utils/serializeSortByParams";
 import api from "../../utils/api"
 import { DEFAULT_PAGINATION_LIMIT } from "../../config";
 
@@ -34,11 +35,12 @@ export const list = ({ offset = 0, limit = DEFAULT_PAGINATION_LIMIT } = {}) => a
     const {individuals} = getState();
     if (individuals.isFetching) return;
 
-    const pageOptions = { limit, offset }
+    const ordering = serializeSortByParams(individuals.sortBy)
+    const options = { limit, offset, ordering }
 
     return await dispatch(networkAction(LIST,
-        api.individuals.list(pageOptions),
-        { meta: pageOptions }
+        api.individuals.list(options),
+        { meta: options }
     ));
 }
 
