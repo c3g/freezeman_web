@@ -14,7 +14,7 @@ import { setStore } from "./utils/withItem.js";
 import App from "./components/App";
 
 import "./styles/global.css";
-import "./styles/antd-adjustments.css";
+import "./styles/antd-adjustments.scss";
 
 const Root = process.env.NODE_ENV === 'development' ? hot(App) : App;
 
