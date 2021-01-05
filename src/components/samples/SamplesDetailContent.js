@@ -3,12 +3,13 @@ import {connect} from "react-redux";
 import {Link, useHistory, useParams} from "react-router-dom";
 
 import {LoadingOutlined, UserOutlined} from "@ant-design/icons";
-import {Card, Col, Descriptions, Empty, Row, Tag, Timeline, Typography} from "antd";
+import {Card, Col, Descriptions, Empty, Row, Space, Tag, Timeline, Typography} from "antd";
 import "antd/es/card/style/css";
 import "antd/es/col/style/css";
 import "antd/es/descriptions/style/css";
 import "antd/es/empty/style/css";
 import "antd/es/row/style/css";
+import "antd/es/space/style/css";
 import "antd/es/tag/style/css";
 import "antd/es/timeline/style/css";
 import "antd/es/typography/style/css";
@@ -82,7 +83,6 @@ const SamplesDetailContent = ({samplesByID, containersByID, individualsByID, use
           <div key="depleted" style={depletedStyle}>
               <Tag color={sample.depleted ? "red" : "green"}>{sample.depleted ? "" : "NOT "}DEPLETED</Tag>
           </div>
-          <EditButton url={`/samples/${id}/update`} />
         </Space>
       : []}
     />
@@ -109,7 +109,14 @@ const SamplesDetailContent = ({samplesByID, containersByID, individualsByID, use
         <Descriptions.Item label="Individual Name">
             {sample.individual &&
               <Link to={`/individuals/${sample.individual}`}>
-                {withIndividual(sample.individual, individual => individual.label, "Loading...")}
+                {
+                  withIndividual(
+                    individualsByID,
+                    sample.individual,
+                    individual => individual.label,
+                    "Loading..."
+                  )
+                }
               </Link>
             }
           </Descriptions.Item>
@@ -124,7 +131,7 @@ const SamplesDetailContent = ({samplesByID, containersByID, individualsByID, use
           <Descriptions.Item label="Container">
             {sample.container &&
               <Link to={`/containers/${sample.container}`}>
-                {withContainer(sample.container, container => container.barcode, "Loading...")}
+                {withContainer(containersByID, sample.container, container => container.barcode, "Loading...")}
               </Link>
             }
           </Descriptions.Item>
@@ -138,15 +145,15 @@ const SamplesDetailContent = ({samplesByID, containersByID, individualsByID, use
         <Descriptions bordered={true} size="small" title="Extraction Details" style={{marginTop: "24px"}}>
           <Descriptions.Item label="Extracted From">
             <Link to={`/samples/${sample.extracted_from}`}>
-              {withSample(sample.extracted_from, sample => sample.name, "Loading...")}
+              {withSample(samplesByID, sample.extracted_from, sample => sample.name, "Loading...")}
             </Link> 
             {" "}(
-            {withContainer(
-              withSample(sample.extracted_from, sample => sample.container),
+            {withContainer(containersByID, 
+              withSample(samplesByID, sample.extracted_from, sample => sample.container),
               container => container.barcode,
               "... ")}
-            {withSample(sample.extracted_from, sample => sample.coordinates) &&
-              ` at ${withSample(sample.extracted_from, sample => sample.coordinates)}`}
+            {withSample(samplesByID, sample.extracted_from, sample => sample.coordinates) &&
+              ` at ${withSample(samplesByID, sample.extracted_from, sample => sample.coordinates)}`}
             )
           </Descriptions.Item>
           <Descriptions.Item label="Volume Used">{volumeUsed}</Descriptions.Item>

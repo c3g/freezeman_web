@@ -62,7 +62,7 @@ const ContainersDetailContent = ({containersByID, get, listParents}) => {
           <Descriptions.Item label="Location" span={2}>
             {container.location ?
               <Link to={`/containers/${container.location}`}>
-                {withContainer(container.location, container => container.barcode, "Loading...")}
+                {withContainer(containersByID, container.location, container => container.barcode, "Loading...")}
               </Link>
               : "—"}
             {container.coordinates && ` at ${container.coordinates}`}

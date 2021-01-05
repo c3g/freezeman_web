@@ -13,11 +13,11 @@ export const setStore = value => { store = value }
  * @param {Function} fn 
  * @param {any} [defaultValue = null] 
  */
-export const withContainer = (id, fn, defaultValue = null) => {
+export const withContainer = (containersByID, id, fn, defaultValue = null) => {
   if (!id)
     return defaultValue
 
-  const container = store.getState().containers.itemsByID[id]
+  const container = containersByID[id]
 
   if (!container) {
     store.dispatch(Container.get(id))      
@@ -36,11 +36,11 @@ export const withContainer = (id, fn, defaultValue = null) => {
  * @param {Function} fn 
  * @param {any} [defaultValue = null] 
  */
-export const withSample = (id, fn, defaultValue = null) => {
+export const withSample = (samplesByID, id, fn, defaultValue = null) => {
   if (!id)
     return defaultValue
 
-  const sample = store.getState().samples.itemsByID[id]
+  const sample = samplesByID[id]
 
   if (!sample) {
     store.dispatch(Sample.get(id))      
@@ -59,12 +59,12 @@ export const withSample = (id, fn, defaultValue = null) => {
  * @param {Function} fn 
  * @param {any} [defaultValue = null] 
  */
-export const withIndividual = (id, fn, defaultValue = null) => {
+export const withIndividual = (individualsByID, id, fn, defaultValue = null) => {
   if (!id) {
     return defaultValue
   }
   
-  const individual = store.getState().individuals.itemsByID[id]
+  const individual = individualsByID[id]
 
   if (!individual) {
     store.dispatch(Individual.get(id))      

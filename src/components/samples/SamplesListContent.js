@@ -26,6 +26,8 @@ const mapStateToProps = state => ({
   totalCount: state.samples.totalCount,
   isFetching: state.samples.isFetching,
   filters: state.samples.filters,
+  containersByID: state.containers.itemsByID,
+  individualsByID: state.individuals.itemsByID,
 });
 
 const actionCreators = {list};
@@ -40,6 +42,8 @@ const SamplesListContent = ({
   totalCount,
   list,
   filters,
+  containersByID,
+  individualsByID,
 }) => {
   const TABLE_COLUMNS = [
     {
@@ -61,20 +65,20 @@ const SamplesListContent = ({
       dataIndex: "individual",
       render: individual => (individual &&
           <Link to={`/individuals/${individual}`}>
-            {withIndividual(individual, individual => individual.label, "loading...")}
+            {withIndividual(individualsByID, individual, individual => individual.label, "loading...")}
           </Link>),
     },
     {
       title: "Container Name",
       dataIndex: "container",
-      render: container => (container && withContainer(container, container => container.name, "loading...")),
+      render: container => (container && withContainer(containersByID, container, container => container.name, "loading...")),
     },
     {
       title: "Container Barcode",
       dataIndex: "container",
       render: container => (container &&
           <Link to={`/containers/${container}`}>
-            {withContainer(container, container => container.barcode, "loading...")}
+            {withContainer(containersByID, container, container => container.barcode, "loading...")}
           </Link>),
     },
     {
