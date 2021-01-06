@@ -44,12 +44,12 @@ export const list = ({ offset = 0, limit = DEFAULT_PAGINATION_LIMIT } = {}) => a
     ));
 }
 
-export const setSortBy = (key, order) => {
+export const setSortBy = thenList((key, order) => {
     return {
         type: SET_SORT_BY,
         data: { key, order }
     }
-};
+});
 
 export default {
     GET,
@@ -63,3 +63,11 @@ export default {
     list,
     setSortBy,
 };
+
+// Helper to call list() after another action
+function thenList(fn) {
+    return (...args) => async dispatch => {
+        dispatch(fn(...args))
+        dispatch(list())
+    }
+}

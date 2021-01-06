@@ -41,26 +41,6 @@ export const update = (id, container) => async (dispatch, getState) => {
     return await dispatch(networkAction(UPDATE, api.containers.update(container), { meta: { id } }));
 };
 
-export const setSortBy = (key, order) => {
-    return {
-        type: SET_SORT_BY,
-        data: { key, order }
-    }
-};
-
-export const setFilter = (name, value) => {
-    return {
-        type: SET_FILTER,
-        data: { name, value }
-    }
-};
-
-export const clearFilters = () => {
-    return {
-        type: CLEAR_FILTERS,
-    }
-};
-
 export const list = ({ offset = 0, limit = DEFAULT_PAGINATION_LIMIT } = {}) => async (dispatch, getState) => {
     if (getState().containers.isFetching)
         return;
@@ -75,6 +55,26 @@ export const list = ({ offset = 0, limit = DEFAULT_PAGINATION_LIMIT } = {}) => a
         { meta: options }
     ));
 };
+
+export const setSortBy = thenList((key, order) => {
+    return {
+        type: SET_SORT_BY,
+        data: { key, order }
+    }
+});
+
+export const setFilter = thenList((name, value) => {
+    return {
+        type: SET_FILTER,
+        data: { name, value }
+    }
+});
+
+export const clearFilters = thenList(() => {
+    return {
+        type: CLEAR_FILTERS,
+    }
+});
 
 export const listParents = (id) => async (dispatch, getState) => {
     const container = getState().containers.itemsByID[id];
@@ -156,3 +156,11 @@ export default {
     listTemplateActions,
     summary,
 };
+
+// Helper to call list() after another action
+function thenList(fn) {
+    return (...args) => async dispatch => {
+        dispatch(fn(...args))
+        dispatch(list())
+    }
+}
