@@ -92,21 +92,21 @@ export const SAMPLE_FILTERS = {
 }
 
 export const CONTAINER_FILTERS = {
-  barcode__icontains: {
+  barcode: {
     type: FILTER_TYPE.INPUT,
     key: "barcode__icontains",
     label: "Barcode",
     width: 250,
     displayByDefault: true,
   },
-  name__icontains: {
+  name: {
     type: FILTER_TYPE.INPUT,
     key: "name__icontains",
     label: "Name",
     width: 250,
     displayByDefault: false,
   },
-  kind__in: {
+  kind: {
     type: FILTER_TYPE.SELECT,
     key: "kind__in",
     label: "Kind",
@@ -114,14 +114,14 @@ export const CONTAINER_FILTERS = {
     placeholder: "All",
     displayByDefault: false,
   },
-  coordinates__icontains: {
+  coordinates: {
     type: FILTER_TYPE.INPUT,
     key: "coordinates__icontains",
     label: "Coordinates",
     width: 80,
     displayByDefault: false,
   },
-  samples__name__icontains: {
+  samples: {
     type: FILTER_TYPE.INPUT,
     key: "samples__name__icontains",
     label: "Sample name",
