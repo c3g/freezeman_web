@@ -8,11 +8,12 @@ const {Text} = Typography;
 import AppPageHeader from "../AppPageHeader";
 import PageContent from "../PageContent";
 import PaginatedTable from "../PaginatedTable";
+import AddButton from "../AddButton";
 import ContainersFilters from "./ContainersFilters";
 import ExportButton from "../ExportButton";
 
 
-import {list} from "../../modules/containers/actions";
+import {list, setSortBy} from "../../modules/containers/actions";
 import api, {withToken}  from "../../utils/api"
 import {actionsToButtonList} from "../../utils/templateActions";
 import {withContainer, withSample} from "../../utils/withItem";
@@ -26,10 +27,12 @@ const getTableColumns = (samplesByID, containersByID) => [
     {
       title: "Name",
       dataIndex: "name",
+      sorter: true,
     },
     {
       title: <><BarcodeOutlined style={{marginRight: "8px"}} /> Barcode</>,
       dataIndex: "barcode",
+      sorter: true,
       render: (barcode, container) => <Link to={`/containers/${container.id}`}>{barcode}</Link>,
     },
     {
@@ -52,10 +55,12 @@ const getTableColumns = (samplesByID, containersByID) => [
     {
       title: "Kind",
       dataIndex: "kind",
+      sorter: true,
     },
     {
       title: "Location Name",
       dataIndex: "location",
+      sorter: true,
       render: location =>
         (location &&
           withContainer(containersByID, location, container => container.name, "Loading...")),
@@ -63,6 +68,7 @@ const getTableColumns = (samplesByID, containersByID) => [
     {
       title: <><BarcodeOutlined style={{marginRight: "8px"}} /> Location Barcode</>,
       dataIndex: "location",
+      sorter: true,
       render: location => (location &&
         <Link to={`/containers/${location}`}>
           {withContainer(containersByID, location, container => container.barcode, "Loading...")}
@@ -75,6 +81,7 @@ const mapStateToProps = state => ({
   token: state.auth.tokens.access,
   containersByID: state.containers.itemsByID,
   containers: state.containers.items,
+  sortBy: state.containers.sortBy,
   filters: state.containers.filters,
   actions: state.containerTemplateActions,
   page: state.containers.page,
@@ -83,19 +90,21 @@ const mapStateToProps = state => ({
   samplesByID: state.samples.itemsByID,
 });
 
-const actionCreators = {list};
+const actionCreators = {list, setSortBy};
 
 const ContainersListContent = ({
   token,
   containers,
   containersByID,
   samplesByID,
+  sortBy,
   filters,
   actions,
   isFetching,
   page,
   totalCount,
   list,
+  setSortBy,
 }) => {
   const listExport = () =>
     withToken(token, api.containers.listExport)
@@ -103,11 +112,16 @@ const ContainersListContent = ({
       .then(response => response.data)
 
   const columns = getTableColumns(samplesByID, containersByID)
+  const onChangeSort = (key, order) => {
+    setSortBy(key, order)
+    list()
+  }
 
   return <>
     <AppPageHeader title="Containers" extra={[
-      <ExportButton exportFunction={listExport} filename="containers"/>,
-      ...actionsToButtonList("/containers", actions)
+      <AddButton key='add' url="/containers/add" />,
+      ...actionsToButtonList("/containers", actions),
+      <ExportButton key='export' exportFunction={listExport} filename="containers"/>,
     ]}/>
     <PageContent>
       <ContainersFilters />
@@ -120,7 +134,9 @@ const ContainersListContent = ({
         loading={isFetching}
         totalCount={totalCount}
         page={page}
+        sortBy={sortBy}
         onLoad={list}
+        onChangeSort={onChangeSort}
       />
     </PageContent>
   </>;

@@ -48,7 +48,9 @@ export const containers = (
     page: { limit: 0, offset: 0 },
     totalCount: 0,
     isFetching: false,
+    error: undefined,
     filters: {},
+    sortBy: { key: undefined, order: undefined },
   },
   action
 ) => {
@@ -62,6 +64,24 @@ export const containers = (
       return merge(state, ['itemsByID', action.meta.id],
         { error: action.error, isFetching: false, didFail: true });
 
+    case CONTAINERS.ADD.REQUEST:
+      return merge(state, ['isFetching'], true);
+    case CONTAINERS.ADD.RECEIVE:
+      return merge({ ...state, isFetching: false, }, ['itemsByID', action.data.id],
+        { ...preprocessContainer(action.data) });
+    case CONTAINERS.ADD.ERROR:
+      return { ...state, error: action.error, isFetching: false };
+
+    case CONTAINERS.UPDATE.REQUEST:
+      return merge(state, ['itemsByID', action.meta.id], { id: action.meta.id, isFetching: true });
+    case CONTAINERS.UPDATE.RECEIVE:
+      return merge(state, ['itemsByID', action.meta.id], { ...preprocessContainer(action.data), isFetching: false, versions: undefined });
+    case CONTAINERS.UPDATE.ERROR:
+      return merge(state, ['itemsByID', action.meta.id],
+        { error: action.error, isFetching: false });
+
+    case CONTAINERS.SET_SORT_BY:
+      return { ...state, sortBy: action.data };
     case CONTAINERS.SET_FILTER:
       return {
         ...state,

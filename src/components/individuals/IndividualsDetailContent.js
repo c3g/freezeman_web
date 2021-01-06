@@ -10,8 +10,9 @@ import "antd/es/spin/style/css";
 
 import AppPageHeader from "../AppPageHeader";
 import PageContent from "../PageContent";
-import { get } from "../../modules/individuals/actions";
+import EditButton from "../EditButton";
 import {withIndividual} from "../../utils/withItem";
+import {get} from "../../modules/individuals/actions";
 
 const IndividualsDetailContent = ({individualsByID, get}) => {
     const history = useHistory();
@@ -23,10 +24,13 @@ const IndividualsDetailContent = ({individualsByID, get}) => {
         get(id);
 
     const isLoading = !isLoaded || individual.isFetching;
-    const title = individual.label;
+    const title =
+        `Individual ${[id, individual ? individual.label : undefined].filter(Boolean).join(' - ')}`;
 
     return <>
-        <AppPageHeader title={title} onBack={history.goBack} />
+        <AppPageHeader title={title} onBack={() => history.push("/individuals/list")} extra={
+            <EditButton url={`/individuals/${id}/update`} />
+        }/>
         <PageContent loading={isLoading}>
             <Descriptions bordered={true} size="small">
                 <Descriptions.Item label="Name">{individual.label}</Descriptions.Item>

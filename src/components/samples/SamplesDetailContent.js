@@ -3,7 +3,17 @@ import {connect} from "react-redux";
 import {Link, useHistory, useParams} from "react-router-dom";
 
 import {LoadingOutlined, UserOutlined} from "@ant-design/icons";
-import {Card, Col, Descriptions, Empty, Row, Space, Tag, Timeline, Typography} from "antd";
+import {
+  Card,
+  Col,
+  Descriptions,
+  Empty,
+  Row,
+  Space,
+  Tag,
+  Timeline,
+  Typography
+} from "antd";
 import "antd/es/card/style/css";
 import "antd/es/col/style/css";
 import "antd/es/descriptions/style/css";
@@ -20,6 +30,7 @@ import renderSampleDiff from "../../utils/renderSampleDiff";
 import AppPageHeader from "../AppPageHeader";
 import PageContent from "../PageContent";
 import ErrorMessage from "../ErrorMessage";
+import EditButton from "../EditButton";
 import {SampleDepletion} from "./SampleDepletion";
 import {get as getSample, listVersions} from "../../modules/samples/actions";
 import {withContainer, withSample, withIndividual} from "../../utils/withItem";
@@ -73,7 +84,7 @@ const SamplesDetailContent = ({samplesByID, containersByID, individualsByID, use
 
   return <>
     <AppPageHeader
-      title={sample.name || `Sample ${id}`}
+      title={`Sample ${sample.name || id}`}
       onBack={() => history.push("/samples/list")}
       extra={isLoaded ?
         <Space>
@@ -83,6 +94,7 @@ const SamplesDetailContent = ({samplesByID, containersByID, individualsByID, use
           <div key="depleted" style={depletedStyle}>
               <Tag color={sample.depleted ? "red" : "green"}>{sample.depleted ? "" : "NOT "}DEPLETED</Tag>
           </div>
+          <EditButton url={`/samples/${id}/update`} />
         </Space>
       : []}
     />

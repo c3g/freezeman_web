@@ -11,6 +11,7 @@ export const individuals = (
         page: { limit: 0, offset: 0 },
         totalCount: 0,
         isFetching: false,
+        sortBy: { key: undefined, order: undefined },
     },
     action
 ) => {
@@ -22,6 +23,22 @@ export const individuals = (
             return merge(state, ['itemsByID', action.meta.id], { ...action.data, isFetching: false });
         case INDIVIDUALS.GET.ERROR:
             return merge(state, ['itemsByID', action.meta.id], { error: action.error, isFetching: false });
+
+        case INDIVIDUALS.ADD.REQUEST:
+            return merge(state, ['isFetching'], true);
+        case INDIVIDUALS.ADD.RECEIVE:
+            return merge({ ...state, isFetching: false, }, ['itemsByID', action.data.id],
+                action.data);
+        case INDIVIDUALS.ADD.ERROR:
+            return { ...state, error: action.error, isFetching: false };
+
+        case INDIVIDUALS.UPDATE.REQUEST:
+            return merge(state, ['itemsByID', action.meta.id], { id: action.meta.id, isFetching: true });
+        case INDIVIDUALS.UPDATE.RECEIVE:
+            return merge(state, ['itemsByID', action.meta.id], { ...action.data, isFetching: false, versions: undefined });
+        case INDIVIDUALS.UPDATE.ERROR:
+            return merge(state, ['itemsByID', action.meta.id],
+                { error: action.error, isFetching: false });
 
         case INDIVIDUALS.LIST.REQUEST:
             return { ...state, isFetching: true };
@@ -46,6 +63,9 @@ export const individuals = (
                 isFetching: false,
                 error: action.error,
             };
+
+        case INDIVIDUALS.SET_SORT_BY:
+            return { ...state, sortBy: action.data };
 
         default:
             return state;

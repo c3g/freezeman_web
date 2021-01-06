@@ -2,15 +2,21 @@ import React from "react";
 import {connect} from "react-redux";
 import {Link} from "react-router-dom";
 
+import {Tag, Typography} from "antd";
+import "antd/es/tag/style/css";
+import "antd/es/typography/style/css";
+const {Text} = Typography
+
 import AppPageHeader from "../AppPageHeader";
 import PageContent from "../PageContent";
 import PaginatedTable from "../PaginatedTable";
 import {SampleDepletion} from "./SampleDepletion";
+import AddButton from "../AddButton";
 import ExportButton from "../ExportButton";
 
 import api, {withToken}  from "../../utils/api"
 
-import {list} from "../../modules/samples/actions";
+import {list, setSortBy} from "../../modules/samples/actions";
 import {actionsToButtonList} from "../../utils/templateActions";
 import {withContainer, withIndividual} from "../../utils/withItem";
 import SamplesFilters from "./SamplesFilters";
@@ -28,9 +34,10 @@ const mapStateToProps = state => ({
   filters: state.samples.filters,
   containersByID: state.containers.itemsByID,
   individualsByID: state.individuals.itemsByID,
+  sortBy: state.samples.sortBy,
 });
 
-const actionCreators = {list};
+const actionCreators = {list, setSortBy};
 
 const SamplesListContent = ({
   token,
@@ -40,25 +47,32 @@ const SamplesListContent = ({
   isFetching,
   page,
   totalCount,
-  list,
   filters,
   containersByID,
   individualsByID,
+  sortBy,
+  list,
+  setSortBy,
 }) => {
   const TABLE_COLUMNS = [
     {
       title: "Type",
       dataIndex: "biospecimen_type",
+      sorter: true,
       width: 80,
+      render: (type) => <Tag>{type}</Tag>,
     },
     {
       title: "Name",
       dataIndex: "name",
-      render: (name, sample) => <Link to={`/samples/${sample.id}`}>{name}</Link>,
-    },
-    {
-      title: "Alias",
-      dataIndex: "alias",
+      sorter: true,
+      render: (name, sample) =>
+        <Link to={`/samples/${sample.id}`}>
+          <div>{name}</div>
+          {sample.alias &&
+            <div><small>alias: {sample.alias}</small></div>
+          }
+        </Link>,
     },
     {
       title: "Individual",
@@ -76,6 +90,7 @@ const SamplesListContent = ({
     {
       title: "Container Barcode",
       dataIndex: "container",
+      sorter: true,
       render: container => (container &&
           <Link to={`/containers/${container}`}>
             {withContainer(containersByID, container, container => container.barcode, "loading...")}
@@ -84,34 +99,48 @@ const SamplesListContent = ({
     {
       title: "Coords",
       dataIndex: "coordinates",
+      sorter: true,
       width: 70,
     },
     {
       title: "Vol. (µL)",
       dataIndex: "volume_history",
+      align: "right",
+      className: "table-column-numbers",
       render: vh => parseFloat(vh[vh.length - 1].volume_value).toFixed(3),
       width: 100,
     },
     {
       title: "Conc. (ng/µL)",
       dataIndex: "concentration",
-      render: conc => conc === null ? "—" : parseFloat(conc).toFixed(3),
+      sorter: true,
+      align: "right",
+      className: "table-column-numbers",
+      render: conc => conc !== null ? parseFloat(conc).toFixed(3) : null,
       width: 115,
     },
     {
       title: "Depleted",
       dataIndex: "depleted",
+      sorter: true,
       render: depleted => <SampleDepletion depleted={depleted} />,
       width: 85,
     }
   ];
+
   const listExport = () =>
     withToken(token, api.samples.listExport)({...serializeFilterParams(filters, SAMPLE_FILTERS)}).then(response => response.data)
 
+  const onChangeSort = (key, order) => {
+    setSortBy(key, order)
+    list()
+  }
+
   return <>
     <AppPageHeader title="Samples & Extractions" extra={[
-      <ExportButton exportFunction={listExport} filename="samples"/>,
-      ...actionsToButtonList("/samples", actions)
+      <AddButton key='add' url="/samples/add" />,
+      ...actionsToButtonList("/samples", actions),
+      <ExportButton key='export' exportFunction={listExport} filename="samples"/>,
     ]}/>
     <PageContent>
       <SamplesFilters />
@@ -125,7 +154,9 @@ const SamplesListContent = ({
         loading={isFetching}
         totalCount={totalCount}
         page={page}
+        sortBy={sortBy}
         onLoad={list}
+        onChangeSort={onChangeSort}
       />
     </PageContent>
   </>;
