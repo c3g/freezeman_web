@@ -1,4 +1,4 @@
-import {FILTER_TYPE, BIOSPECIMEN_TYPE} from "../../constants";
+import {FILTER_TYPE, BIOSPECIMEN_TYPE, SEX, TAXON} from "../../constants";
 
 export const SAMPLE_FILTERS = {
   biospecimen_type: {
@@ -13,31 +13,26 @@ export const SAMPLE_FILTERS = {
     type: FILTER_TYPE.INPUT,
     key: "name__icontains",
     label: "Name",
-    width: 250,
   },
   individual: {
     type: FILTER_TYPE.INPUT,
     key: "individual__label__icontains",
     label: "Individual Label",
-    width: 250,
   },
   container_name: {
     type: FILTER_TYPE.INPUT,
     key: "container__name__icontains",
     label: "Container Name",
-    width: 250,
   },
   container: {
     type: FILTER_TYPE.INPUT,
     key: "container__barcode__icontains",
     label: "Container Barcode",
-    width: 250,
   },
   coordinates: {
     type: FILTER_TYPE.INPUT,
     key: "coordinates__icontains",
     label: "Coordinates",
-    width: 80,
   },
   concentration: {
     type: FILTER_TYPE.RANGE,
@@ -97,15 +92,11 @@ export const CONTAINER_FILTERS = {
     type: FILTER_TYPE.INPUT,
     key: "barcode__icontains",
     label: "Barcode",
-    width: 250,
-    displayByDefault: true,
   },
   name: {
     type: FILTER_TYPE.INPUT,
     key: "name__icontains",
     label: "Name",
-    width: 250,
-    displayByDefault: false,
   },
   kind: {
     type: FILTER_TYPE.SELECT,
@@ -113,20 +104,49 @@ export const CONTAINER_FILTERS = {
     label: "Kind",
     mode: "multiple",
     placeholder: "All",
-    displayByDefault: false,
   },
   coordinates: {
     type: FILTER_TYPE.INPUT,
     key: "coordinates__icontains",
     label: "Coordinates",
-    width: 80,
-    displayByDefault: false,
   },
   samples: {
     type: FILTER_TYPE.INPUT,
     key: "samples__name__icontains",
     label: "Sample name",
-    width: 250,
-    displayByDefault: false,
+  },
+}
+
+export const INDIVIDUAL_FILTERS = {
+  label: {
+    type: FILTER_TYPE.INPUT,
+    key: "label__icontains",
+    label: "Label",
+  },
+  taxon: {
+    type: FILTER_TYPE.SELECT,
+    key: "taxon__in",
+    label: "Taxon",
+    mode: "multiple",
+    placeholder: "All",
+    options: TAXON.map(x => ({ label: x, value: x })),
+  },
+  sex: {
+    type: FILTER_TYPE.SELECT,
+    key: "sex__in",
+    label: "Sex",
+    mode: "multiple",
+    placeholder: "All",
+    options: SEX.map(x => ({ label: x, value: x })),
+  },
+  pedigree: {
+    type: FILTER_TYPE.INPUT,
+    key: "pedigree__icontains",
+    label: "Pedigree",
+  },
+  cohort: {
+    type: FILTER_TYPE.INPUT,
+    key: "cohort__icontains",
+    label: "Cohort",
   },
 }
