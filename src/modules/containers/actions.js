@@ -42,18 +42,16 @@ export const update = (id, container) => async (dispatch, getState) => {
 };
 
 export const list = ({ offset = 0, limit = DEFAULT_PAGINATION_LIMIT } = {}) => async (dispatch, getState) => {
-    if (getState().containers.isFetching)
-        return;
-
     const containers = getState().containers
     const filters = serializeFilterParams(containers.filters, CONTAINER_FILTERS)
     const ordering = serializeSortByParams(containers.sortBy)
     const options = { limit, offset, ordering, ...filters}
 
-    return await dispatch(networkAction(LIST,
+    const res =  await dispatch(networkAction(LIST,
         api.containers.list(options),
-        { meta: options }
+        { meta: { ignoreError: 'AbortError' } }
     ));
+    return res
 };
 
 export const setSortBy = thenList((key, order) => {

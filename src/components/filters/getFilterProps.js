@@ -32,50 +32,35 @@ function getInputFilterProps(column, descriptions, filters, setFilter) {
   const dataIndex = column.dataIndex;
   const description = descriptions[dataIndex];
 
-  const selectRef = useRef()
+  const inputRef = useRef()
 
-  const onSearch = (selectedKeys, confirm, dataIndex) => {
+  const onSearch = (selectedKeys, setSelectedKeys) => {
+    setSelectedKeys(selectedKeys)
     setFilter(dataIndex, selectedKeys[0])
-    confirm()
   }
-
-  const onReset = clearFilters => {
-    setFilter(dataIndex, undefined)
-    clearFilters()
-  };
 
   return {
     filteredValue: arrayize(filters[dataIndex]),
     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
       <div style={{ padding: 8 }}>
         <Input
-          ref={selectRef}
+          ref={inputRef}
+          allowClear
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
-          onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-          onPressEnter={() => onSearch(selectedKeys, confirm, dataIndex)}
-          style={{ width: 188, marginBottom: 8, display: 'block' }}
+          onChange={e => onSearch(e.target.value ? [e.target.value] : [], setSelectedKeys)}
+          onPressEnter={confirm}
         />
-        <Space>
-          <Button
-            type="primary"
-            onClick={() => onSearch(selectedKeys, confirm, dataIndex)}
-            icon={<SearchOutlined />}
-            size="small"
-            style={{ width: 90 }}
-          >
-            Search
-          </Button>
-          <Button onClick={() => onReset(clearFilters)} size="small" style={{ width: 90 }}>
-            Reset
-          </Button>
-        </Space>
       </div>
     ),
     filterIcon: getFilterIcon,
     onFilterDropdownVisibleChange: visible => {
       if (visible) {
-        setTimeout(() => selectRef?.current.select(), 100);
+        setTimeout(() => inputRef?.current.select(), 100);
+        document.body.classList.add('input-dropdown-visible')
+      }
+      else {
+        document.body.classList.remove('input-dropdown-visible')
       }
     },
   }

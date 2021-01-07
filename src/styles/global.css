@@ -20,6 +20,10 @@ select:-webkit-autofill:focus {
   font-variant-numeric: tabular-nums;
 }
 
+.input-dropdown-visible .ant-table-filter-dropdown {
+  opacity: 0.9 !important;
+}
+
 
 .SamplesFilters .ant-collapse-header {
   text-align: left;

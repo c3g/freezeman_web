@@ -33,14 +33,12 @@ export const update = (id, individual) => async (dispatch, getState) => {
 
 export const list = ({ offset = 0, limit = DEFAULT_PAGINATION_LIMIT } = {}) => async (dispatch, getState) => {
     const {individuals} = getState();
-    if (individuals.isFetching) return;
-
     const ordering = serializeSortByParams(individuals.sortBy)
     const options = { limit, offset, ordering }
 
     return await dispatch(networkAction(LIST,
         api.individuals.list(options),
-        { meta: options }
+        { meta: { ignoreError: 'AbortError' } }
     ));
 }
 
