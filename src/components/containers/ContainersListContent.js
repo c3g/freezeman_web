@@ -144,7 +144,10 @@ const ContainersListContent = ({
     ]}/>
     <PageContent>
       <div style={{ textAlign: 'right', marginBottom: '1em' }}>
-        <Button disabled={Object.keys(filters).length === 0} onClick={clearFilters}>
+        <Button
+          disabled={Object.entries(filters).filter(e => e[1]).length === 0}
+          onClick={clearFilters}
+        >
           Clear Filters
         </Button>
       </div>

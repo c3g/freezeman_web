@@ -12,6 +12,9 @@ export default function serializeFilterParams(filters, descriptions) {
     const description = descriptions[field]
     const key = description.key
 
+    if (value === undefined)
+      return
+
     switch (description.type) {
 
       case FILTER_TYPE.RANGE: {

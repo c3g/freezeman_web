@@ -20,7 +20,6 @@ import api, {withToken}  from "../../utils/api"
 import {list, setFilter, clearFilters, setSortBy} from "../../modules/samples/actions";
 import {actionsToButtonList} from "../../utils/templateActions";
 import {withContainer, withIndividual} from "../../utils/withItem";
-import SamplesFilters from "./SamplesFilters";
 import serializeFilterParams from "../../utils/serializeFilterParams";
 import {SAMPLE_FILTERS} from "../filters/descriptions";
 import getFilterProps from "../filters/getFilterProps";
@@ -160,7 +159,7 @@ const SamplesListContent = ({
         <SamplesFilters style={{ flex: 1 }} />
         <Button
           style={{ margin: 6 }}
-          disabled={Object.keys(filters).length === 0}
+          disabled={Object.entries(filters).filter(e => e[1]).length === 0}
           onClick={clearFilters}
         >
           Clear Filters

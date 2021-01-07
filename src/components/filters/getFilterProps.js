@@ -1,7 +1,5 @@
-import React, {useRef, useEffect} from "react";
-import {connect} from "react-redux";
-import {Link} from "react-router-dom";
-import {Button, Input, Radio, Select, Space} from "antd";
+import React, {useRef} from "react";
+import {Button, Input, InputNumber, Radio, Select, Space} from "antd";
 import "antd/es/button/style/css";
 import "antd/es/input/style/css";
 import "antd/es/radio/style/css";
@@ -25,7 +23,7 @@ export default function getFilterProps(column, descriptions, filters, setFilter)
         return getRadioFilterProps(column, descriptions, filters, setFilter)
       return getSelectFilterProps(column, descriptions, filters, setFilter)
     case FILTER_TYPE.RANGE:
-      throw new Error('unimplemented') // Not needed for now
+      return getRangeFilterProps(column, descriptions, filters, setFilter)
   }
   throw new Error(`unreachable: ${description.type}`)
 }
@@ -183,7 +181,74 @@ function getRadioFilterProps(column, descriptions, filters, setFilter) {
   }
 }
 
+function getRangeFilterProps(column, descriptions, filters, setFilter) {
+  const dataIndex = column.dataIndex;
+  const description = descriptions[dataIndex];
+
+  const inputRef = useRef()
+
+  const onSearch = (value, confirm) => {
+    setFilter(dataIndex, value)
+    confirm()
+  }
+
+  const onReset = clearFilters => {
+    setFilter(dataIndex, undefined)
+    clearFilters()
+  };
+
+  return {
+    filterDropdown: ({ setSelectedKeys, selectedKeys: value, confirm, clearFilters }) => (
+      <div style={{ padding: 8 }}>
+        <Input.Group compact style={{ marginBottom: 8 }}>
+          <InputNumber
+            ref={inputRef}
+            placeholder='From'
+            min={0}
+            style={{ width: 100 }}
+            value={value[0]}
+            onChange={newMin => setSelectedKeys([nullize(newMin), value[1]])}
+          />
+          <InputNumber
+            placeholder='To'
+            min={0}
+            style={{ width: 100 }}
+            value={value[1]}
+            onChange={newMax => setSelectedKeys([value[0], nullize(newMax)])}
+          />
+        </Input.Group>
+        <Space>
+          <Button
+            type="primary"
+            onClick={() => onSearch(value, confirm)}
+            icon={<SearchOutlined />}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Search
+          </Button>
+          <Button onClick={() => onReset(clearFilters)} size="small" style={{ width: 90 }}>
+            Reset
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: getFilterIcon,
+    onFilterDropdownVisibleChange: visible => {
+      if (visible) {
+        setTimeout(() => inputRef?.current.focus(), 100);
+      }
+    },
+  }
+}
 
 function getFilterIcon(filtered) {
   return <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
 }
+
+function nullize(v) {
+  if (v === '')
+    return null
+  return v
+}
+
