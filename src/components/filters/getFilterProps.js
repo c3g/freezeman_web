@@ -73,7 +73,10 @@ function getSelectFilterProps(column, descriptions, filters, setFilter) {
   const selectRef = useRef()
 
   const onSearch = (selectedKeys, confirm, dataIndex) => {
-    setFilter(dataIndex, selectedKeys)
+    if (selectedKeys.length === 0)
+      setFilter(dataIndex, undefined)
+    else
+      setFilter(dataIndex, selectedKeys)
     confirm()
   }
 
@@ -232,7 +235,11 @@ function getRangeFilterProps(column, descriptions, filters, setFilter) {
 }
 
 function getFilterIcon(filtered) {
-  return <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
+  return (
+    <SearchOutlined
+      style={{ color: filtered ? '#ff9800' : undefined }}
+    />
+  )
 }
 
 function nullize(v) {

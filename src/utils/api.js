@@ -98,12 +98,12 @@ function apiFetch(method, route, body, options = { cancel: false }) {
       const controller = new AbortController()
       signal = controller.signal
       if (ongoingRequests[baseRoute]) {
-        ongoingRequests[baseRoute].abort()
+        ongoingRequests[baseRoute].controller.abort()
       }
       ongoingRequests[baseRoute] = controller
     }
 
-    return fetch(`${API_BASE_PATH}${route}`, {
+    const request = fetch(`${API_BASE_PATH}${route}`, {
       method,
       headers,
       credentials: 'omit',
@@ -115,7 +115,8 @@ function apiFetch(method, route, body, options = { cancel: false }) {
           JSON.stringify(body) :
           undefined,
     })
-    .then(res => {
+
+    return request.then(res => {
       if (options.cancel) {
         delete ongoingRequests[baseRoute]
       }

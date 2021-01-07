@@ -130,11 +130,6 @@ const ContainersListContent = ({
       setFilter,
     )))
 
-  const onChangeSort = (key, order) => {
-    setSortBy(key, order)
-    list()
-  }
-
   const nFilters = Object.entries(filters).filter(e => e[1]).length
 
   return <>
@@ -163,7 +158,7 @@ const ContainersListContent = ({
         filters={filters}
         sortBy={sortBy}
         onLoad={list}
-        onChangeSort={onChangeSort}
+        onChangeSort={setSortBy}
       />
     </PageContent>
   </>;

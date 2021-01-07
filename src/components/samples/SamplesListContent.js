@@ -137,11 +137,6 @@ const SamplesListContent = ({
   const listExport = () =>
     withToken(token, api.samples.listExport)({...serializeFilterParams(filters, SAMPLE_FILTERS)}).then(response => response.data)
 
-  const onChangeSort = (key, order) => {
-    setSortBy(key, order)
-    list()
-  }
-
   const columns = getTableColumns(containersByID, individualsByID)
   .map(c => Object.assign(c, getFilterProps(
     c,
@@ -181,7 +176,7 @@ const SamplesListContent = ({
         filters={filters}
         sortBy={sortBy}
         onLoad={list}
-        onChangeSort={onChangeSort}
+        onChangeSort={setSortBy}
       />
     </PageContent>
   </>;

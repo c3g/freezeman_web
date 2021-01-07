@@ -74,7 +74,8 @@ function PaginatedTable ({
   const onChangeTable = (pagination, filters, sorter) => {
     const key = sorter.column?.dataIndex
     const order = sorter.order
-    onChangeSort(key, order)
+    if (sortBy.key !== key || sortBy.order !== order)
+      onChangeSort(key, order)
   };
 
   return (

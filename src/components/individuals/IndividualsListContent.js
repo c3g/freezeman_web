@@ -70,11 +70,6 @@ const IndividualsListContent = ({
   const listExport = () =>
     withToken(token, api.individuals.listExport)().then(response => response.data)
 
-  const onChangeSort = (key, order) => {
-    setSortBy(key, order)
-    list()
-  }
-
   return <>
     <AppPageHeader title="Individuals" extra={[
         <AddButton key='add' url="/individuals/add" />,
@@ -91,7 +86,7 @@ const IndividualsListContent = ({
           page={page}
           sortBy={sortBy}
           onLoad={list}
-          onChangeSort={onChangeSort}
+          onChangeSort={setSortBy}
         />
     </PageContent>
   </>;
