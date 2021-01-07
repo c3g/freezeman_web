@@ -98,7 +98,7 @@ function apiFetch(method, route, body, options = { cancel: false }) {
       const controller = new AbortController()
       signal = controller.signal
       if (ongoingRequests[baseRoute]) {
-        ongoingRequests[baseRoute].controller.abort()
+        ongoingRequests[baseRoute].abort()
       }
       ongoingRequests[baseRoute] = controller
     }
