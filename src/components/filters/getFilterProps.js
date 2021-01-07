@@ -93,6 +93,11 @@ function getSelectFilterProps(column, descriptions, filters, setFilter) {
     clearFilters()
   };
 
+  const onKeyDown = (ev, confirm) => {
+    if (ev.key === 'Escape')
+      confirm()
+  }
+
   const options = description.options || column.options || []
 
   return {
@@ -115,12 +120,13 @@ function getSelectFilterProps(column, descriptions, filters, setFilter) {
         </Space>
         <Select
           ref={selectRef}
+          style={{ width: 188, marginBottom: 8, display: 'block' }}
           placeholder={`Select ${column.title}`}
           mode='multiple'
           options={options}
           value={description.mode === 'multiple' ? selectedKeys : selectedKeys[0]}
           onChange={e => onSearch(e, setSelectedKeys, null)}
-          style={{ width: 188, marginBottom: 8, display: 'block' }}
+          onKeyDown={ev => onKeyDown(ev, confirm)}
         />
       </div>
     ),
