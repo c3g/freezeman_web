@@ -1,7 +1,6 @@
 import React, {useCallback} from "react";
 import {connect} from "react-redux";
 import {filter as filterObject} from "rambda";
-import {debounce} from "debounce";
 import {Button, Collapse} from "antd";
 import "antd/es/button/style/css";
 import "antd/es/collapse/style/css";
@@ -19,14 +18,11 @@ const actionCreators = {setFilter, list};
 const SamplesFilters = ({
   filters,
   setFilter,
-  list,
   ...rest
 }) => {
 
-  const listDebounced = useCallback(debounce(list, 250), [list])
   const onChangeFilter = (filter, value) => {
     setFilter(filter.key, value)
-    listDebounced()
   }
 
   return (
