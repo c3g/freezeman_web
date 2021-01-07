@@ -1,11 +1,11 @@
-import React, {useCallback} from "react";
+import React from "react";
 import {connect} from "react-redux";
 import {filter as filterObject} from "rambda";
-import {Button, Collapse} from "antd";
+import {Collapse} from "antd";
 import "antd/es/button/style/css";
 import "antd/es/collapse/style/css";
 
-import {list, setFilter} from "../../modules/samples/actions";
+import {setFilter} from "../../modules/samples/actions";
 import FilterGroup from "../filters/FilterGroup";
 import {SAMPLE_FILTERS} from "../filters/descriptions";
 
@@ -13,7 +13,7 @@ const mapStateToProps = state => ({
   filters: state.samples.filters,
 });
 
-const actionCreators = {setFilter, list};
+const actionCreators = {setFilter};
 
 const SamplesFilters = ({
   filters,
