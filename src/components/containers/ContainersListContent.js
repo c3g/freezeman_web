@@ -1,7 +1,9 @@
 import React, {useRef, useEffect} from "react";
 import {connect} from "react-redux";
 import {Link} from "react-router-dom";
-import {Button} from "antd";
+import {Button, Typography} from "antd";
+import {BarcodeOutlined} from "@ant-design/icons";
+const {Text} = Typography;
 
 import AppPageHeader from "../AppPageHeader";
 import PageContent from "../PageContent";

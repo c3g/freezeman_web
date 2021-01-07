@@ -20,6 +20,7 @@ import api, {withToken}  from "../../utils/api"
 import {list, setFilter, clearFilters, setSortBy} from "../../modules/samples/actions";
 import {actionsToButtonList} from "../../utils/templateActions";
 import {withContainer, withIndividual} from "../../utils/withItem";
+import SamplesFilters from "./SamplesFilters";
 import serializeFilterParams from "../../utils/serializeFilterParams";
 import {SAMPLE_FILTERS} from "../filters/descriptions";
 import getFilterProps from "../filters/getFilterProps";
