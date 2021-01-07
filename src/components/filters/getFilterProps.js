@@ -20,12 +20,12 @@ export default function getFilterProps(column, descriptions, filters, setFilter)
   switch (description.type) {
     case FILTER_TYPE.INPUT:
       return getInputFilterProps(column, descriptions, filters, setFilter)
-    case FILTER_TYPE.RANGE:
-      return undefined // FIXME implement this
     case FILTER_TYPE.SELECT:
       if (description.mode !== 'multiple')
         return getRadioFilterProps(column, descriptions, filters, setFilter)
       return getSelectFilterProps(column, descriptions, filters, setFilter)
+    case FILTER_TYPE.RANGE:
+      throw new Error('unimplemented') // Not needed for now
   }
   throw new Error(`unreachable: ${description.type}`)
 }
@@ -74,26 +74,11 @@ function getInputFilterProps(column, descriptions, filters, setFilter) {
       </div>
     ),
     filterIcon: getFilterIcon,
-    /* onFilter: (value, record) =>
-     *   record[dataIndex]
-     *     ? record[dataIndex].toString().toLowerCase().includes(value.toLowerCase())
-     *     : '', */
     onFilterDropdownVisibleChange: visible => {
       if (visible) {
         setTimeout(() => selectRef?.current.select(), 100);
       }
     },
-    /* render: text =>
-     *   this.state.searchedColumn === dataIndex ? (
-     *     <Highlighter
-     *       highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
-     *       searchWords={[this.state.searchText]}
-     *       autoEscape
-     *       textToHighlight={text ? text.toString() : ''}
-     *     />
-     *   ) : (
-     *     text
-     *   ), */
   }
 }
 
