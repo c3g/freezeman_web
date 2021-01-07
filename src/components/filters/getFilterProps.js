@@ -78,7 +78,7 @@ function getSelectFilterProps(column, descriptions, filters, setFilter) {
 
   const selectRef = useRef()
 
-  const onSearch = (selectedKeys, setSelectedKeys, confirm, dataIndex) => {
+  const onSearch = (selectedKeys, setSelectedKeys, confirm) => {
     setSelectedKeys(selectedKeys);
     if (selectedKeys.length === 0)
       setFilter(dataIndex, undefined)
@@ -102,7 +102,7 @@ function getSelectFilterProps(column, descriptions, filters, setFilter) {
         <Space style={{ marginBottom: 8 }}>
           <Button
             type="primary"
-            onClick={() => onSearch(selectedKeys, setSelectedKeys, confirm, dataIndex)}
+            onClick={() => onSearch(selectedKeys, setSelectedKeys, confirm)}
             icon={<SearchOutlined />}
             size="small"
             style={{ width: 90 }}
@@ -119,7 +119,7 @@ function getSelectFilterProps(column, descriptions, filters, setFilter) {
           mode='multiple'
           options={options}
           value={description.mode === 'multiple' ? selectedKeys : selectedKeys[0]}
-          onChange={e => onSearch(e, setSelectedKeys, null, dataIndex)}
+          onChange={e => onSearch(e, setSelectedKeys, null)}
           style={{ width: 188, marginBottom: 8, display: 'block' }}
         />
       </div>
