@@ -118,7 +118,7 @@ function getSelectFilterProps(column, descriptions, filters, setFilter) {
           mode='multiple'
           options={options}
           value={description.mode === 'multiple' ? selectedKeys : selectedKeys[0]}
-          onChange={e => onSearch(e, setSelectedKeys, null, dataIndex)}
+          onChange={e => setSelectedKeys(e)}
           style={{ width: 188, marginBottom: 8, display: 'block' }}
         />
       </div>
