@@ -1,35 +1,36 @@
 import React, {useRef, useEffect} from "react";
 import {connect} from "react-redux";
 import {Link} from "react-router-dom";
-import {Button, Input, Select, Space} from "antd";
+import {Button, Input, Radio, Select, Space} from "antd";
 import "antd/es/button/style/css";
 import "antd/es/input/style/css";
+import "antd/es/radio/style/css";
 import "antd/es/select/style/css";
 import "antd/es/space/style/css";
 import {SearchOutlined} from "@ant-design/icons";
 
 import {FILTER_TYPE} from "../../constants";
 
-export default function getFilterProps(column, descriptions, filters, setFilter, clearStoreFilters) {
+const EMPTY_VALUE = '__EMPTY_VALUE__'
+
+export default function getFilterProps(column, descriptions, filters, setFilter) {
   const description = descriptions[column.dataIndex];
   if (!description)
     return undefined;
   switch (description.type) {
     case FILTER_TYPE.INPUT:
-      return getInputFilterProps(column, descriptions, filters, setFilter, clearStoreFilters)
+      return getInputFilterProps(column, descriptions, filters, setFilter)
     case FILTER_TYPE.RANGE:
       return undefined // FIXME implement this
     case FILTER_TYPE.SELECT:
-      if (description.mode === 'multiple')
-        return getSelectMultipleFilterProps(column, descriptions, filters, setFilter, clearStoreFilters)
-      else
-        return undefined // FIXME implement this
-        // return getSelectOneFilterProps(column, descriptions, filters, setFilter, clearStoreFilters)
+      if (description.mode !== 'multiple')
+        return getRadioFilterProps(column, descriptions, filters, setFilter)
+      return getSelectFilterProps(column, descriptions, filters, setFilter)
   }
   throw new Error(`unreachable: ${description.type}`)
 }
 
-function getInputFilterProps(column, descriptions, filters, setFilter, clearStoreFilters) {
+function getInputFilterProps(column, descriptions, filters, setFilter) {
   const dataIndex = column.dataIndex;
   const description = descriptions[dataIndex];
 
@@ -41,7 +42,7 @@ function getInputFilterProps(column, descriptions, filters, setFilter, clearStor
   }
 
   const onReset = clearFilters => {
-    clearStoreFilters()
+    setFilter(dataIndex, undefined)
     clearFilters()
   };
 
@@ -96,7 +97,7 @@ function getInputFilterProps(column, descriptions, filters, setFilter, clearStor
   }
 }
 
-function getSelectMultipleFilterProps(column, descriptions, filters, setFilter, clearStoreFilters) {
+function getSelectFilterProps(column, descriptions, filters, setFilter) {
   const dataIndex = column.dataIndex;
   const description = descriptions[dataIndex];
 
@@ -108,7 +109,7 @@ function getSelectMultipleFilterProps(column, descriptions, filters, setFilter, 
   }
 
   const onReset = clearFilters => {
-    clearStoreFilters()
+    setFilter(dataIndex, undefined)
     clearFilters()
   };
 
@@ -134,11 +135,10 @@ function getSelectMultipleFilterProps(column, descriptions, filters, setFilter, 
         <Select
           ref={selectRef}
           placeholder={`Select ${column.title}`}
-          allowClear
-          mode='multiple'
+          mode={description.mode}
           options={options}
-          value={selectedKeys}
-          onChange={e => setSelectedKeys(e)}
+          value={description.mode === 'multiple' ? selectedKeys : selectedKeys[0]}
+          onChange={e => setSelectedKeys([e])}
           style={{ width: 188, marginBottom: 8, display: 'block' }}
         />
       </div>
@@ -152,6 +152,51 @@ function getSelectMultipleFilterProps(column, descriptions, filters, setFilter, 
   }
 }
 
+function getRadioFilterProps(column, descriptions, filters, setFilter) {
+  const dataIndex = column.dataIndex;
+  const description = descriptions[dataIndex];
+
+  const buttonRef = useRef()
+
+  const onSearch = (ev, setSelectedKeys, confirm, clearFilters) => {
+    const value = typeof ev === 'string' ? ev : ev.target.value
+    const tableValue = value === EMPTY_VALUE ? [] : [value]
+    const storeValue = value === EMPTY_VALUE ? undefined : value
+    setSelectedKeys(tableValue)
+    setFilter(dataIndex, storeValue)
+    confirm()
+  }
+
+  const options = description.options || column.options || []
+
+  return {
+    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+      <div style={{ padding: 8 }}>
+        <Radio.Group
+          value={selectedKeys[0] ? selectedKeys[0] : EMPTY_VALUE}
+          onChange={ev => onSearch(ev, setSelectedKeys, confirm, clearFilters)}
+        >
+          <Radio.Button key={EMPTY_VALUE} value={EMPTY_VALUE} ref={buttonRef}>
+            {description.placeholder}
+          </Radio.Button>
+          {
+            options.map(item =>
+              <Radio.Button key={item.value} value={item.value}>
+                {item.label}
+              </Radio.Button>
+            )
+          }
+        </Radio.Group>
+      </div>
+    ),
+    filterIcon: getFilterIcon,
+    onFilterDropdownVisibleChange: visible => {
+      if (visible) {
+        setTimeout(() => buttonRef?.current.focus(), 100);
+      }
+    },
+  }
+}
 
 
 function getFilterIcon(filtered) {

@@ -127,7 +127,6 @@ const ContainersListContent = ({
       CONTAINER_FILTERS,
       filters,
       setFilter,
-      clearFilters,
     )))
 
   const onChangeSort = (key, order) => {

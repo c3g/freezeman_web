@@ -1,49 +1,74 @@
 import {FILTER_TYPE, BIOSPECIMEN_TYPE} from "../../constants";
 
 export const SAMPLE_FILTERS = {
-  name__icontains: {
-    type: FILTER_TYPE.INPUT,
-    key: "name__icontains",
-    label: "Name",
-    width: 250,
-    displayByDefault: true,
-  },
-  container__barcode__icontains: {
-    type: FILTER_TYPE.INPUT,
-    key: "container__barcode__icontains",
-    label: "Container Barcode",
-    width: 250,
-    displayByDefault: true,
-  },
-  biospecimen_type__in: {
+  biospecimen_type: {
     type: FILTER_TYPE.SELECT,
     key: "biospecimen_type__in",
     label: "Type",
     mode: "multiple",
     placeholder: "All",
     options: BIOSPECIMEN_TYPE.map(x => ({ label: x, value: x })),
-    displayByDefault: true,
   },
-  individual__label__icontains: {
+  name: {
+    type: FILTER_TYPE.INPUT,
+    key: "name__icontains",
+    label: "Name",
+    width: 250,
+  },
+  individual: {
     type: FILTER_TYPE.INPUT,
     key: "individual__label__icontains",
     label: "Individual Label",
     width: 250,
-    displayByDefault: false,
   },
+  container_name: {
+    type: FILTER_TYPE.INPUT,
+    key: "container__name__icontains",
+    label: "Container Name",
+    width: 250,
+  },
+  container: {
+    type: FILTER_TYPE.INPUT,
+    key: "container__barcode__icontains",
+    label: "Container Barcode",
+    width: 250,
+  },
+  coordinates: {
+    type: FILTER_TYPE.INPUT,
+    key: "coordinates__icontains",
+    label: "Coordinates",
+    width: 80,
+  },
+  concentration: {
+    type: FILTER_TYPE.RANGE,
+    key: "concentration",
+    label: "Concentration",
+  },
+  depleted: {
+    type: FILTER_TYPE.SELECT,
+    key: "depleted",
+    label: "Depleted",
+    placeholder: "All",
+    options: [
+      { label: "Yes", value: "true" },
+      { label: "No",  value: "false"},
+    ],
+  },
+
+  // Detached filters
   individual__pedigree__icontains: {
     type: FILTER_TYPE.INPUT,
     key: "individual__pedigree__icontains",
     label: "Individual Pedigree",
     width: 250,
-    displayByDefault: false,
+    detached: true,
   },
   individual__cohort__icontains: {
     type: FILTER_TYPE.INPUT,
     key: "individual__cohort__icontains",
     label: "Individual Cohort",
     width: 250,
-    displayByDefault: false,
+    detached: true,
   },
   individual__sex__in: {
     type: FILTER_TYPE.SELECT,
@@ -56,38 +81,14 @@ export const SAMPLE_FILTERS = {
       { label: "Male",    value: "M" },
       { label: "Unknown", value: "Unknown" },
     ],
-    displayByDefault: false,
-  },
-  container__name__icontains: {
-    type: FILTER_TYPE.INPUT,
-    key: "container__name__icontains",
-    label: "Container Name",
-    width: 250,
-    displayByDefault: false,
+    detached: true,
   },
   collection_site__icontains: {
     type: FILTER_TYPE.INPUT,
     key: "collection_site__icontains",
     label: "Collection site",
     width: 250,
-    displayByDefault: false,
-  },
-  depleted: {
-    type: FILTER_TYPE.SELECT,
-    key: "depleted",
-    label: "Depleted",
-    placeholder: "All",
-    options: [
-      { label: "Yes", value: "true" },
-      { label: "No",  value: "false"},
-    ],
-    displayByDefault: false,
-  },
-  concentration: {
-    type: FILTER_TYPE.RANGE,
-    key: "concentration",
-    label: "Concentration",
-    displayByDefault: false,
+    detached: true,
   },
 }
 
