@@ -39,6 +39,11 @@ function getInputFilterProps(column, descriptions, filters, setFilter) {
     setFilter(dataIndex, selectedKeys[0])
   }
 
+  const onKeyDown = (ev, confirm) => {
+    if (ev.key === 'Escape')
+      confirm()
+  }
+
   return {
     filteredValue: arrayize(filters[dataIndex]),
     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
@@ -50,6 +55,7 @@ function getInputFilterProps(column, descriptions, filters, setFilter) {
           value={selectedKeys[0]}
           onChange={e => onSearch(e.target.value ? [e.target.value] : [], setSelectedKeys)}
           onPressEnter={confirm}
+          onKeyDown={ev => onKeyDown(ev, confirm)}
         />
       </div>
     ),
@@ -188,6 +194,11 @@ function getRangeFilterProps(column, descriptions, filters, setFilter) {
     clearFilters()
   };
 
+  const onKeyDown = (ev, confirm) => {
+    if (ev.key === 'Escape')
+      confirm()
+  }
+
   return {
     filteredValue: arrayize(filters[dataIndex]),
     filterDropdown: ({ setSelectedKeys, selectedKeys: value, confirm, clearFilters }) => (
@@ -200,6 +211,8 @@ function getRangeFilterProps(column, descriptions, filters, setFilter) {
             style={{ width: 100 }}
             value={value[0]}
             onChange={newMin => setSelectedKeys([nullize(newMin), value[1]])}
+            onKeyDown={ev => onKeyDown(ev, confirm)}
+            onPressEnter={() => onSearch(value, confirm)}
           />
           <InputNumber
             placeholder='To'
@@ -207,6 +220,8 @@ function getRangeFilterProps(column, descriptions, filters, setFilter) {
             style={{ width: 100 }}
             value={value[1]}
             onChange={newMax => setSelectedKeys([value[0], nullize(newMax)])}
+            onKeyDown={ev => onKeyDown(ev, confirm)}
+            onPressEnter={() => onSearch(value, confirm)}
           />
         </Input.Group>
         <Space>
