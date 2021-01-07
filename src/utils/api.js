@@ -17,7 +17,7 @@ const api = {
     get: id => get(`/containers/${id}/`),
     add: container => post("/containers/", container),
     update: container => put(`/containers/${container.id}/`, container),
-    list: options => get("/containers", options, { cancel: true }),
+    list: (options, abort) => get("/containers", options, { abort }),
     listExport: options => get("/containers/list_export/", {format: "csv", ...options}),
     listParents: id => get(`/containers/${id}/list_parents/`),
     listChildren: id => get(`/containers/${id}/list_children/`),
@@ -36,7 +36,7 @@ const api = {
     get: individualId => get(`/individuals/${individualId}/`),
     add: individual => post("/individuals/", individual),
     update: individual => put(`/individuals/${individual.id}/`, individual),
-    list: (page = {}) => get("/individuals/", page, { cancel: true }),
+    list: (options, abort) => get("/individuals/", options, { abort }),
     listExport: options => get("/individuals/list_export/", {format: "csv", ...options}),
     search: q => get("/individuals/search/", { q }),
   },
@@ -45,7 +45,7 @@ const api = {
     get: sampleId => get(`/samples/${sampleId}/`),
     add: sample => post("/samples/", sample),
     update: sample => put(`/samples/${sample.id}/`, sample),
-    list: options => get("/samples", options, { cancel: true }),
+    list: (options, abort) => get("/samples", options, { abort }),
     listExport: options => get("/samples/list_export/", {format: "csv", ...options}),
     listCollectionSites: () => get("/samples/list_collection_sites/"),
     listVersions: sampleId => get(`/samples/${sampleId}/versions/`),
@@ -77,7 +77,7 @@ export function withToken(token, fn) {
 
 const ongoingRequests = {}
 
-function apiFetch(method, route, body, options = { cancel: false }) {
+function apiFetch(method, route, body, options = { abort: false }) {
   const baseRoute = getPathname(route)
 
   return (_, getState) => {
@@ -92,9 +92,9 @@ function apiFetch(method, route, body, options = { cancel: false }) {
     if (!isFormData(body) && isObject(body))
       headers["content-type"] = "application/json"
 
-    // For cancelable requests
+    // For abortable requests
     let signal
-    if (options.cancel) {
+    if (options.abort) {
       const controller = new AbortController()
       signal = controller.signal
       if (ongoingRequests[baseRoute]) {
@@ -117,7 +117,7 @@ function apiFetch(method, route, body, options = { cancel: false }) {
     })
 
     return request.then(res => {
-      if (options.cancel) {
+      if (options.abort) {
         delete ongoingRequests[baseRoute]
       }
       return res

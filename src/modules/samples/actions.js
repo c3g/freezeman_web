@@ -38,15 +38,18 @@ export const update = (id, sample) => async (dispatch, getState) => {
     return await dispatch(networkAction(UPDATE, api.samples.update(sample), { meta: { id } }));
 };
 
-export const list = ({ offset = 0, limit = DEFAULT_PAGINATION_LIMIT } = {}) => async (dispatch, getState) => {
+export const list = ({ offset = 0, limit = DEFAULT_PAGINATION_LIMIT } = {}, abort) => async (dispatch, getState) => {
     const samples = getState().samples
+    if (samples.isFetching && !abort)
+        return
+
     const filters = serializeFilterParams(samples.filters, SAMPLE_FILTERS)
     const ordering = serializeSortByParams(samples.sortBy)
     const options = { limit, offset, ordering, ...filters}
 
     return await dispatch(networkAction(LIST,
-        api.samples.list(options),
-        { meta: { ignoreError: 'AbortError' } }
+        api.samples.list(options, abort),
+        { meta: { ...options, ignoreError: 'AbortError' } }
     ));
 };
 
@@ -115,6 +118,6 @@ export default {
 function thenList(fn) {
     return (...args) => async dispatch => {
         dispatch(fn(...args))
-        dispatch(list())
+        dispatch(list(undefined, true))
     }
 }
