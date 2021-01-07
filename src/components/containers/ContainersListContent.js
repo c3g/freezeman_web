@@ -1,9 +1,7 @@
 import React, {useRef, useEffect} from "react";
 import {connect} from "react-redux";
 import {Link} from "react-router-dom";
-import {Button, Typography} from "antd";
-import {BarcodeOutlined} from "@ant-design/icons";
-const {Text} = Typography;
+import {Button} from "antd";
 
 import AppPageHeader from "../AppPageHeader";
 import PageContent from "../PageContent";
@@ -20,6 +18,7 @@ import serializeFilterParams from "../../utils/serializeFilterParams";
 
 import {CONTAINER_FILTERS} from "../filters/descriptions";
 import getFilterProps from "../filters/getFilterProps";
+import FiltersWarning from "../filters/FiltersWarning";
 
 const CONTAINER_KIND_SHOW_SAMPLE = ["tube"]
 
@@ -136,6 +135,8 @@ const ContainersListContent = ({
     list()
   }
 
+  const nFilters = Object.entries(filters).filter(e => e[1]).length
+
   return <>
     <AppPageHeader title="Containers" extra={[
       <AddButton key='add' url="/containers/add" />,
@@ -144,8 +145,9 @@ const ContainersListContent = ({
     ]}/>
     <PageContent>
       <div style={{ textAlign: 'right', marginBottom: '1em' }}>
+        <FiltersWarning value={nFilters} />
         <Button
-          disabled={Object.entries(filters).filter(e => e[1]).length === 0}
+          disabled={nFilters === 0}
           onClick={clearFilters}
         >
           Clear Filters

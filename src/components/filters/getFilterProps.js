@@ -45,6 +45,7 @@ function getInputFilterProps(column, descriptions, filters, setFilter) {
   };
 
   return {
+    filteredValue: arrayize(filters[dataIndex]),
     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
       <div style={{ padding: 8 }}>
         <Input
@@ -99,6 +100,7 @@ function getSelectFilterProps(column, descriptions, filters, setFilter) {
   const options = description.options || column.options || []
 
   return {
+    filteredValue: arrayize(filters[dataIndex]),
     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
       <div style={{ padding: 8 }}>
         <Space style={{ marginBottom: 8 }}>
@@ -118,10 +120,10 @@ function getSelectFilterProps(column, descriptions, filters, setFilter) {
         <Select
           ref={selectRef}
           placeholder={`Select ${column.title}`}
-          mode={description.mode}
+          mode='multiple'
           options={options}
           value={description.mode === 'multiple' ? selectedKeys : selectedKeys[0]}
-          onChange={e => setSelectedKeys([e])}
+          onChange={e => setSelectedKeys(e)}
           style={{ width: 188, marginBottom: 8, display: 'block' }}
         />
       </div>
@@ -153,6 +155,7 @@ function getRadioFilterProps(column, descriptions, filters, setFilter) {
   const options = description.options || column.options || []
 
   return {
+    filteredValue: arrayize(filters[dataIndex]),
     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
       <div style={{ padding: 8 }}>
         <Radio.Group
@@ -198,6 +201,7 @@ function getRangeFilterProps(column, descriptions, filters, setFilter) {
   };
 
   return {
+    filteredValue: arrayize(filters[dataIndex]),
     filterDropdown: ({ setSelectedKeys, selectedKeys: value, confirm, clearFilters }) => (
       <div style={{ padding: 8 }}>
         <Input.Group compact style={{ marginBottom: 8 }}>
@@ -250,5 +254,13 @@ function nullize(v) {
   if (v === '')
     return null
   return v
+}
+
+function arrayize(v) {
+  if (!v)
+    return null
+  if (Array.isArray(v))
+    return v
+  return [v]
 }
 
