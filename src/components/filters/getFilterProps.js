@@ -84,7 +84,8 @@ function getSelectFilterProps(column, descriptions, filters, setFilter) {
       setFilter(dataIndex, undefined)
     else
       setFilter(dataIndex, selectedKeys)
-    confirm()
+    if (confirm)
+      confirm()
   }
 
   const onReset = clearFilters => {
@@ -118,7 +119,7 @@ function getSelectFilterProps(column, descriptions, filters, setFilter) {
           mode='multiple'
           options={options}
           value={description.mode === 'multiple' ? selectedKeys : selectedKeys[0]}
-          onChange={e => onSearch(e, setSelectedKeys, confirm, dataIndex)}
+          onChange={e => onSearch(e, setSelectedKeys, null, dataIndex)}
           style={{ width: 188, marginBottom: 8, display: 'block' }}
         />
       </div>
