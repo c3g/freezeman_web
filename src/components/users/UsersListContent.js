@@ -1,63 +1,122 @@
 import React from "react";
 import {connect} from "react-redux";
-import {useHistory} from "react-router-dom";
+import moment from "moment";
+import {Link} from "react-router-dom";
+import {Button, Tag} from "antd";
 
-import {Card, Col, Row} from "antd";
-import "antd/es/card/style/css";
-import "antd/es/col/style/css";
-import "antd/es/row/style/css";
-
-import itemRender from "../../utils/breadcrumbItemRender";
 import AppPageHeader from "../AppPageHeader";
 import PageContent from "../PageContent";
-import AutocompleteReport from "./AutocompleteReport";
-import routes from "./routes";
-import reports from "./list";
+import PaginatedTable from "../PaginatedTable";
 
-const cardStyle = {
-  marginBottom: "1em",
-};
 
-const mapStateToProps = state => ({state});
+import {list, setFilter, clearFilters, setSortBy} from "../../modules/users/actions";
 
-const ReportsListContent = ({state}) => {
-  const history = useHistory();
+import {USER_FILTERS} from "../filters/descriptions";
+import getFilterProps from "../filters/getFilterProps";
+import FiltersWarning from "../filters/FiltersWarning";
 
-  return (
-    <>
-      <AppPageHeader
-        title="Users"
-        breadcrumb={{routes, itemRender}}
+const getTableColumns = () => [
+    {
+      title: "Username",
+      dataIndex: "username",
+      sorter: true,
+      render: (username, user) => <Link to={`/users/${user.id}`}>{username}</Link>,
+    },
+    {
+      title: "Email",
+      dataIndex: "email",
+      sorter: true,
+    },
+    {
+      title: "Groups",
+      dataIndex: "groups",
+      sorter: true,
+      render: (groups = []) => groups.map(g => <Tag key={g.name}>{g.name}</Tag>)
+    },
+    {
+      title: "Date Joined",
+      dataIndex: "",
+      sorter: true,
+      render: date => moment(date).fromNow(),
+    },
+    {
+      title: "Staff",
+      dataIndex: "is_staff",
+      sorter: true,
+      render: value => value ? 'Yes' : 'No',
+    },
+    {
+      title: "Superuser",
+      dataIndex: "is_superuser",
+      sorter: true,
+      render: value => value ? 'Yes' : 'No',
+    },
+  ];
+
+
+const mapStateToProps = state => ({
+  usersByID: state.users.itemsByID,
+  users: state.users.items,
+  sortBy: state.users.sortBy,
+  filters: state.users.filters,
+  actions: state.userTemplateActions,
+  page: state.users.page,
+  totalCount: state.users.totalCount,
+  isFetching: state.users.isFetching,
+});
+
+const actionCreators = {list, setFilter, clearFilters, setSortBy};
+
+const UsersListContent = ({
+  users,
+  usersByID,
+  sortBy,
+  filters,
+  isFetching,
+  page,
+  totalCount,
+  list,
+  setFilter,
+  clearFilters,
+  setSortBy,
+}) => {
+
+  const columns = getTableColumns(usersByID)
+    .map(c => Object.assign(c, getFilterProps(
+      c,
+      USER_FILTERS,
+      filters,
+      setFilter,
+    )))
+
+  const nFilters = Object.entries(filters).filter(e => e[1]).length
+
+  return <>
+    <AppPageHeader title="Users" />
+    <PageContent>
+      <div style={{ textAlign: 'right', marginBottom: '1em' }}>
+        <FiltersWarning value={nFilters} />
+        <Button
+          disabled={nFilters === 0}
+          onClick={clearFilters}
+        >
+          Clear Filters
+        </Button>
+      </div>
+      <PaginatedTable
+        columns={columns}
+        items={users}
+        itemsByID={usersByID}
+        loading={isFetching}
+        totalCount={totalCount}
+        page={page}
+        filters={filters}
+        sortBy={sortBy}
+        onLoad={list}
+        onChangeSort={setSortBy}
       />
-      <PageContent>
-        <Row>
-          {reports.map(report =>
-            <Col key={report.path} md={24} lg={18}>
-              <Card
-                style={cardStyle}
-                type="inner"
-                title={<>
-                  {report.icon} {report.title}
-                </>}
-              >
-                <p>
-                  {report.description}
-                </p>
-                <AutocompleteReport
-                  data={report.selector(state)}
-                  searchKeys={report.searchKeys}
-                  renderItem={report.renderItem}
-                  onSelect={itemId => {
-                    history.push(`${report.path}/${itemId}`)
-                  }}
-                />
-              </Card>
-            </Col>
-          )}
-        </Row>
-      </PageContent>
-    </>
-  );
-};
+    </PageContent>
+  </>;
+}
 
-export default connect(mapStateToProps)(ReportsListContent);
+export default connect(mapStateToProps, actionCreators)(UsersListContent);
