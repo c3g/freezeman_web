@@ -26,7 +26,7 @@ const ReportsListContent = ({state}) => {
   return (
     <>
       <AppPageHeader
-        title="Reports"
+        title="Users"
         breadcrumb={{routes, itemRender}}
       />
       <PageContent>
