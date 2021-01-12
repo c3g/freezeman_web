@@ -6,6 +6,7 @@ import {Button} from "antd";
 import AppPageHeader from "../AppPageHeader";
 import PageContent from "../PageContent";
 import PaginatedTable from "../PaginatedTable";
+import VirtualTable from "../VirtualTable";
 import AddButton from "../AddButton";
 import ExportButton from "../ExportButton";
 
@@ -148,18 +149,30 @@ const ContainersListContent = ({
           Clear Filters
         </Button>
       </div>
-      <PaginatedTable
+      <VirtualTable
         columns={columns}
         items={containers}
         itemsByID={containersByID}
+        page={page}
         loading={isFetching}
         totalCount={totalCount}
-        page={page}
+        onLoad={list}
         filters={filters}
         sortBy={sortBy}
-        onLoad={list}
         onChangeSort={setSortBy}
       />
+      {/*<PaginatedTable*/}
+      {/*  columns={columns}*/}
+      {/*  items={containers}*/}
+      {/*  itemsByID={containersByID}*/}
+      {/*  loading={isFetching}*/}
+      {/*  totalCount={totalCount}*/}
+      {/*  page={page}*/}
+      {/*  filters={filters}*/}
+      {/*  sortBy={sortBy}*/}
+      {/*  onLoad={list}*/}
+      {/*  onChangeSort={setSortBy}*/}
+      {/*/>*/}
     </PageContent>
   </>;
 }

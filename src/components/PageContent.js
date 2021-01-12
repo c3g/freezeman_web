@@ -6,7 +6,7 @@ import "antd/es/spin/style/css";
 const defaultStyle = {
   flex: "1",
   padding: "16px 24px 24px 24px",
-  overflow: "auto",
+  overflow: "hidden",
 };
 
 const PageContent = ({children, style, loading = false}) =>
