@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
-
+import React, { useState, useRef, useCallback } from 'react';
+import {debounce} from "debounce";
+import {throttle} from "throttle-debounce";
 import {Table} from "antd";
 import 'antd/dist/antd.css';
 import "antd/es/pagination/style/css";
 import "antd/es/table/style/css";
-
-import ResizeObserver from 'rc-resize-observer';
 
 
 const pageSize = 20;
@@ -24,7 +23,6 @@ function VirtualTable ({
    onChangeSort,
  }) {
   const scroll = {y: 600};
-
 
   const filtersRef = useRef(filters);
   const sortByRef = useRef(sortBy);
@@ -45,7 +43,7 @@ function VirtualTable ({
   const shouldLoadNextChunk =
     !loading && (isCurrentPageUnloaded || doesNextPageContainUnloaded);
 
-  if (shouldLoadNextChunk) {
+  const loadNextChunk = useCallback(debounce(() => {
     let offset
 
     if (isCurrentPageUnloaded)
@@ -54,7 +52,15 @@ function VirtualTable ({
       offset = items.length;
 
     setTimeout(() => onLoad({ offset }), 0);
+  }, 200))
+
+  if (shouldLoadNextChunk) {
+    loadNextChunk();
   }
+
+  const addData = throttle(2000, () => {
+      setCurrentPage(currentPage + 1);
+  })
 
   if (sortByRef.current !== sortBy) {
     setCurrentPage(1)
@@ -76,14 +82,13 @@ function VirtualTable ({
   if(tableBody){
     tableBody.addEventListener("scroll", event => {
       const scroller = event.target;
-      let height = scroller.scrollHeight - scroller.clientHeight;
-      if(scroller.scrollTop > height - 100){
-        // Loading more data by increasing page
-        setCurrentPage(currentPage + 1);
+      const height = scroller.scrollHeight - scroller.clientHeight;
+      const scrollTop = scroller.scrollTop
+      // Loading more data by increasing page
+      if(scrollTop/height > 0.8  && !isCurrentPageUnloaded && !loading){
+        addData();
       }
-      console.log('ITEMS LENGTH', items.length)
-      console.log('scrollTop', scroller.scrollTop)
-      console.log('height', height)
+
 
     })
   }
@@ -91,24 +96,19 @@ function VirtualTable ({
   return (
     <div>
       <Table
-        key={dataSource.length}
         className="virtual-table"
         size="small"
         bordered={true}
         scroll={scroll}
         columns={columns}
         pagination={false}
-        //dataSource={hasUnloadedItems ? [] : dataSource}
         dataSource={dataSource}
         rowKey={rowKey}
         scroll={{y: 600}}
-        loading={loading && isCurrentPageUnloaded}
-        //loading={loading}
+        loading={isCurrentPageUnloaded}
+        //loading={loading && isCurrentPageUnloaded}
         childrenColumnName={'UNEXISTENT_KEY'}
         onChange={onChangeTable}
-        // components={{
-        //   body: renderVirtualList,
-        // }}
       />
       <span> {items.length} ITEMS </span>
     </div>

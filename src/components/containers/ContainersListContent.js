@@ -161,18 +161,6 @@ const ContainersListContent = ({
         sortBy={sortBy}
         onChangeSort={setSortBy}
       />
-      {/*<PaginatedTable*/}
-      {/*  columns={columns}*/}
-      {/*  items={containers}*/}
-      {/*  itemsByID={containersByID}*/}
-      {/*  loading={isFetching}*/}
-      {/*  totalCount={totalCount}*/}
-      {/*  page={page}*/}
-      {/*  filters={filters}*/}
-      {/*  sortBy={sortBy}*/}
-      {/*  onLoad={list}*/}
-      {/*  onChangeSort={setSortBy}*/}
-      {/*/>*/}
     </PageContent>
   </>;
 }
