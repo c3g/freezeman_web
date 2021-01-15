@@ -61,7 +61,7 @@ export const samples = (
         case SAMPLES.CLEAR_FILTERS:
             return {
                 ...state,
-                filters: {},
+                filters: set(state.filters, {}, {}),
                 page: set(state.page, ['offset'], 0),
             };
 
