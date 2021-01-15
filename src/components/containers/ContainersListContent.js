@@ -25,6 +25,10 @@ const CONTAINER_KIND_SHOW_SAMPLE = ["tube"]
 
 const getTableColumns = (samplesByID, containersByID, containerKinds) => [
     {
+      title: "#",
+      render: (_, item, i) => i,
+    },
+    {
       title: "Name",
       dataIndex: "name",
       sorter: true,

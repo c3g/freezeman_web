@@ -24,36 +24,19 @@ function VirtualTable ({
    onLoad,
    onChangeSort,
  }) {
-  const scroll = {y: 400};
-  const tableHeight = scroll.y;
-  const rowHeight = 50;
-  const [tableWidth, setTableWidth] = useState(0);
-  const widthColumnCount = columns.filter(({ width }) => !width).length;
-  const mergedColumns = columns.map((column) => {
-    if (column.width) {
-      return column;
-    }
+  const dataSource = items.map(id => itemsByID[id]);
 
-    return { ...column, width: Math.floor(tableWidth / widthColumnCount) };
-  });
+  const scroll = { y: 400 };
+  const rowHeight = 50;
+  const tableHeight = scroll.y;
+  const [tableWidth, setTableWidth] = useState(0);
+
+  const mergedColumns = getMergedColumns(columns, tableWidth)
+
   const gridRef = useRef();
-  const [connectObject] = useState(() => {
-    const obj = {};
-    Object.defineProperty(obj, 'scrollLeft', {
-      get: () => null,
-      set: (scrollLeft) => {
-        if (gridRef.current) {
-          gridRef.current.scrollTo({
-            scrollLeft,
-          });
-        }
-      },
-    });
-    return obj;
-  });
 
   const resetVirtualGrid = () => {
-    if(gridRef.current){
+    if (gridRef.current) {
       gridRef.current.resetAfterIndices({
         columnIndex: 0,
         shouldForceUpdate: false,
@@ -63,78 +46,16 @@ function VirtualTable ({
 
   useEffect(() => resetVirtualGrid, [tableWidth]);
 
-  const renderVirtualList = (rawData, { scrollbarSize, ref, onScroll }) => {
-    ref.current = connectObject;
-    const totalHeight = rawData.length * rowHeight;
-    return (
-      <VariableSizeGrid
-        ref={gridRef}
-        className="virtual-grid"
-        columnCount={mergedColumns.length}
-        columnWidth={(index) => {
-          const { width } = mergedColumns[index];
-          return totalHeight > scroll.y && index === mergedColumns.length - 1
-            ? width - scrollbarSize - 1
-            : width;
-        }}
-        height={tableHeight}
-        rowCount={rawData.length}
-        rowHeight={() => rowHeight}
-        width={tableWidth}
-        scrollToFirstRowOnChange={false}
-        onScroll={(scroller) => {
-          let scrollerHeight = scroller.scrollTop;
-          let height = rawData.length * 40;
-          let heightPercent = scrollerHeight/height;
-          console.log('scroler',scroller);
-          if(heightPercent > 0.8){
-            // Loading more data by increasing page
-            setCurrentPage(currentPage + 1);
-          }
-        }}
-      >
-        {({ columnIndex, rowIndex, style }) => (
-          <div
-            className={classNames('virtual-table-cell', {
-              'virtual-table-cell-last': columnIndex === mergedColumns.length - 1,
-            })}
-            style={style}
-          >
-            {rawData[rowIndex][mergedColumns[columnIndex].dataIndex]}
-          </div>
-        )}
-      </VariableSizeGrid>
-    );
-  };
-
   const filtersRef = useRef(filters);
   const sortByRef = useRef(sortBy);
   const [currentPage, setCurrentPage] = useState(1);
-  const nextPage = currentPage + 1;
-  const nextPageEndIndex = nextPage * pageSize;
 
-  const startIndex = (currentPage - 1) * pageSize;
-  const endIndex   = Math.min((currentPage) * pageSize, totalCount);
+  const info =
+    getPageInfo(dataSource, loading, currentPage, pageSize, totalCount, page)
 
-  const isLastPage = endIndex >= totalCount;
-
-  const dataSource = items.map(id => itemsByID[id]);
-
-  const hasUnloadedItems = dataSource.some(d => d === undefined);
-  const isCurrentPageUnloaded = ((endIndex - 1) > items.length) || hasUnloadedItems;
-  const doesNextPageContainUnloaded = !isLastPage && nextPageEndIndex > items.length && items.length < totalCount;
-  const shouldLoadNextChunk =
-    !loading && (isCurrentPageUnloaded || doesNextPageContainUnloaded);
-
-  if (shouldLoadNextChunk) {
-    let offset
-
-    if (isCurrentPageUnloaded)
-      offset = Math.floor(startIndex / page.limit) * page.limit;
-    else if (doesNextPageContainUnloaded)
-      offset = items.length;
-
-    setTimeout(() => onLoad({ offset }), 0);
+  if (info.shouldLoadNextChunk) {
+    console.log('load', info.offset)
+    setTimeout(() => onLoad({ offset: info.offset }), 0);
   }
 
   if (sortByRef.current !== sortBy) {
@@ -153,6 +74,81 @@ function VirtualTable ({
       onChangeSort(key, order)
   };
 
+  const [connectObject] = useState(() => {
+    const obj = {};
+    Object.defineProperty(obj, 'scrollLeft', {
+      get: () => null,
+      set: scrollLeft => {
+        if (gridRef.current) {
+          gridRef.current.scrollTo({
+            scrollLeft,
+          });
+        }
+      },
+    });
+    return obj;
+  });
+
+  const renderVirtualList = (rawData, { scrollbarSize, ref }) => {
+    ref.current = connectObject;
+
+    const totalHeight = rawData.length * rowHeight;
+    const getColumnWidth = index => {
+      const { width } = mergedColumns[index];
+      return totalHeight > scroll.y && index === mergedColumns.length - 1
+        ? width - scrollbarSize - 1
+        : width + 1;
+    }
+
+    return (
+      <VariableSizeGrid
+        ref={gridRef}
+        className="virtual-grid"
+        columnCount={mergedColumns.length}
+        columnWidth={getColumnWidth}
+        height={tableHeight}
+        rowCount={totalCount}
+        rowHeight={() => rowHeight}
+        width={tableWidth}
+        scrollToFirstRowOnChange={false}
+        onItemsRendered={props => {
+          const isOverThreshold =
+            props.visibleRowStopIndex > (dataSource.length - 10)
+          const shouldLoadNext = !loading && isOverThreshold
+          if (shouldLoadNext)
+            setCurrentPage(currentPage + 1);
+        }}
+      >
+        {({ columnIndex, rowIndex, style }) => {
+          const column = mergedColumns[columnIndex]
+          const item = rawData[rowIndex]
+          const isLoading = item === undefined
+          const field = item?.[column.dataIndex]
+          const content =
+            !isLoading ?
+              (column?.render?.(field, item, rowIndex) ?? field) :
+              <div className='ph-item'>
+                <div className='ph-row'>
+                  <div className='ph-col-12' />
+                </div>
+              </div>
+
+          return (
+            <div
+              className={classNames('virtual-table-cell', {
+                'virtual-table-cell-last': columnIndex === mergedColumns.length - 1,
+                'virtual-table-cell-loading': isLoading,
+              })}
+              style={style}
+            >
+              {content}
+            </div>
+          )
+        }}
+      </VariableSizeGrid>
+    );
+  };
+
   return (
     <ResizeObserver
       onResize={({ width }) => {
@@ -168,8 +164,7 @@ function VirtualTable ({
         pagination={false}
         dataSource={dataSource}
         rowKey={rowKey}
-        // loading={loading && isCurrentPageUnloaded}
-        loading={isCurrentPageUnloaded || doesNextPageContainUnloaded}
+        loading={loading && dataSource.length === 0}
         childrenColumnName={'UNEXISTENT_KEY'}
         onChange={onChangeTable}
         components={{
@@ -181,3 +176,40 @@ function VirtualTable ({
 }
 
 export default VirtualTable;
+
+
+// Helpers
+
+function getMergedColumns(columns, tableWidth) {
+  const widthColumnCount = columns.filter(c => !c.width).length;
+  return columns.map(column => {
+    if (column.width) {
+      return column;
+    }
+    return { ...column, width: Math.floor(tableWidth / widthColumnCount) }
+  })
+}
+
+function getPageInfo(dataSource, loading, currentPage, pageSize, totalCount, page) {
+  const nextPage = currentPage + 1;
+  const nextPageEndIndex = nextPage * pageSize;
+
+  const startIndex = (currentPage - 1) * pageSize;
+  const endIndex   = Math.min(currentPage * pageSize, totalCount);
+
+  const isLastPage = endIndex >= totalCount;
+
+  // const hasUnloadedItems = dataSource.some(d => d === undefined);
+  const hasUnloadedItems = false;
+  const isCurrentPageUnloaded = ((endIndex - 1) > dataSource.length) || hasUnloadedItems;
+  const doesNextPageContainUnloaded = !isLastPage && nextPageEndIndex > dataSource.length && dataSource.length < totalCount;
+  const shouldLoadNextChunk =
+    !loading && (isCurrentPageUnloaded || doesNextPageContainUnloaded);
+
+  let offset = dataSource.length
+
+  return {
+    shouldLoadNextChunk,
+    offset,
+  }
+}
