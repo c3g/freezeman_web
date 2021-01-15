@@ -1,11 +1,13 @@
-import React, { useState, useRef, useCallback } from 'react';
-import {debounce} from "debounce";
-import {throttle} from "throttle-debounce";
+import React, { useState, useEffect, useRef } from 'react';
+
 import {Table} from "antd";
 import 'antd/dist/antd.css';
 import "antd/es/pagination/style/css";
 import "antd/es/table/style/css";
 
+import {VariableSizeGrid} from 'react-window';
+import ResizeObserver from 'rc-resize-observer';
+import classNames from 'classnames';
 
 const pageSize = 20;
 
@@ -22,7 +24,88 @@ function VirtualTable ({
    onLoad,
    onChangeSort,
  }) {
-  const scroll = {y: 600};
+  const scroll = {y: 400};
+  const tableHeight = scroll.y;
+  const rowHeight = 50;
+  const [tableWidth, setTableWidth] = useState(0);
+  const widthColumnCount = columns.filter(({ width }) => !width).length;
+  const mergedColumns = columns.map((column) => {
+    if (column.width) {
+      return column;
+    }
+
+    return { ...column, width: Math.floor(tableWidth / widthColumnCount) };
+  });
+  const gridRef = useRef();
+  const [connectObject] = useState(() => {
+    const obj = {};
+    Object.defineProperty(obj, 'scrollLeft', {
+      get: () => null,
+      set: (scrollLeft) => {
+        if (gridRef.current) {
+          gridRef.current.scrollTo({
+            scrollLeft,
+          });
+        }
+      },
+    });
+    return obj;
+  });
+
+  const resetVirtualGrid = () => {
+    if(gridRef.current){
+      gridRef.current.resetAfterIndices({
+        columnIndex: 0,
+        shouldForceUpdate: false,
+      });
+    }
+  };
+
+  useEffect(() => resetVirtualGrid, [tableWidth]);
+
+  const renderVirtualList = (rawData, { scrollbarSize, ref, onScroll }) => {
+    ref.current = connectObject;
+    const totalHeight = rawData.length * rowHeight;
+    return (
+      <VariableSizeGrid
+        ref={gridRef}
+        className="virtual-grid"
+        columnCount={mergedColumns.length}
+        columnWidth={(index) => {
+          const { width } = mergedColumns[index];
+          return totalHeight > scroll.y && index === mergedColumns.length - 1
+            ? width - scrollbarSize - 1
+            : width;
+        }}
+        height={tableHeight}
+        rowCount={rawData.length}
+        rowHeight={() => rowHeight}
+        width={tableWidth}
+        scrollToFirstRowOnChange={false}
+        onScroll={(scroller) => {
+          let scrollerHeight = scroller.scrollTop;
+          let height = rawData.length * 40;
+          let heightPercent = scrollerHeight/height;
+          console.log('scroler',scroller);
+          if(heightPercent > 0.8){
+            // Loading more data by increasing page
+            setCurrentPage(currentPage + 1);
+          }
+        }}
+      >
+        {({ columnIndex, rowIndex, style }) => (
+          <div
+            className={classNames('virtual-table-cell', {
+              'virtual-table-cell-last': columnIndex === mergedColumns.length - 1,
+            })}
+            style={style}
+          >
+            {rawData[rowIndex][mergedColumns[columnIndex].dataIndex]}
+          </div>
+        )}
+      </VariableSizeGrid>
+    );
+  };
 
   const filtersRef = useRef(filters);
   const sortByRef = useRef(sortBy);
@@ -43,7 +126,7 @@ function VirtualTable ({
   const shouldLoadNextChunk =
     !loading && (isCurrentPageUnloaded || doesNextPageContainUnloaded);
 
-  const loadNextChunk = useCallback(debounce(() => {
+  if (shouldLoadNextChunk) {
     let offset
 
     if (isCurrentPageUnloaded)
@@ -52,15 +135,7 @@ function VirtualTable ({
       offset = items.length;
 
     setTimeout(() => onLoad({ offset }), 0);
-  }, 200))
-
-  if (shouldLoadNextChunk) {
-    loadNextChunk();
   }
-
-  const addData = throttle(2000, () => {
-      setCurrentPage(currentPage + 1);
-  })
 
   if (sortByRef.current !== sortBy) {
     setCurrentPage(1)
@@ -78,41 +153,30 @@ function VirtualTable ({
       onChangeSort(key, order)
   };
 
-  const tableBody = document.querySelector(".ant-table-body")
-  if(tableBody){
-    tableBody.addEventListener("scroll", event => {
-      const scroller = event.target;
-      const height = scroller.scrollHeight - scroller.clientHeight;
-      const scrollTop = scroller.scrollTop
-      // Loading more data by increasing page
-      if(scrollTop/height > 0.8  && !isCurrentPageUnloaded && !loading){
-        addData();
-      }
-
-
-    })
-  }
-
   return (
-    <div>
+    <ResizeObserver
+      onResize={({ width }) => {
+        setTableWidth(width);
+      }}
+    >
       <Table
         className="virtual-table"
         size="small"
         bordered={true}
         scroll={scroll}
-        columns={columns}
+        columns={mergedColumns}
         pagination={false}
         dataSource={dataSource}
         rowKey={rowKey}
-        scroll={{y: 600}}
-        loading={isCurrentPageUnloaded}
-        //loading={loading && isCurrentPageUnloaded}
+        // loading={loading && isCurrentPageUnloaded}
+        loading={isCurrentPageUnloaded || doesNextPageContainUnloaded}
         childrenColumnName={'UNEXISTENT_KEY'}
         onChange={onChangeTable}
+        components={{
+          body: renderVirtualList,
+        }}
       />
-      <span> {items.length} ITEMS </span>
-    </div>
-
+    </ResizeObserver>
   );
 }
 
