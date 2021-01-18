@@ -41,3 +41,8 @@ select:-webkit-autofill:focus {
 .ContainerEditContent__coordinates .ant-form-item-control {
   display: inline-flex;
 }
+
+
+.virtual-table-cell {
+  border-bottom: 1px solid #eef0f0;
+}

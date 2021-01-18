@@ -74,24 +74,9 @@ function VirtualTable ({
       onChangeSort(key, order)
   };
 
-  const [connectObject] = useState(() => {
-    const obj = {};
-    Object.defineProperty(obj, 'scrollLeft', {
-      get: () => null,
-      set: scrollLeft => {
-        if (gridRef.current) {
-          gridRef.current.scrollTo({
-            scrollLeft,
-          });
-        }
-      },
-    });
-    return obj;
-  });
+
 
   const renderVirtualList = (rawData, { scrollbarSize, ref }) => {
-    ref.current = connectObject;
-
     const totalHeight = rawData.length * rowHeight;
     const getColumnWidth = index => {
       const { width } = mergedColumns[index];
