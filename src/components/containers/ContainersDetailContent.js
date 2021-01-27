@@ -11,15 +11,16 @@ import ContainerHierarchy from "./ContainerHierarchy";
 import PageContent from "../PageContent";
 import EditButton from "../EditButton";
 import {get, listParents} from "../../modules/containers/actions";
-import {withContainer} from "../../utils/withItem";
+import {withContainer, withSample} from "../../utils/withItem";
 
 const mapStateToProps = state => ({
   containersByID: state.containers.itemsByID,
+  samplesByID: state.samples.itemsByID,
 });
 
 const actionCreators = {get, listParents};
 
-const ContainersDetailContent = ({containersByID, get, listParents}) => {
+const ContainersDetailContent = ({containersByID, samplesByID, get, listParents}) => {
   const history = useHistory();
   const {id} = useParams();
 
@@ -59,6 +60,18 @@ const ContainersDetailContent = ({containersByID, get, listParents}) => {
           </Descriptions.Item>
           <Descriptions.Item label="Kind">{container.kind}</Descriptions.Item>
           <Descriptions.Item label="Comment" span={3}>{container.comment}</Descriptions.Item>
+          <Descriptions.Item label="Sample" span={3}>
+            {container.samples.map((sampleId, i) =>
+              <>
+                <Link key={sampleId} to={`/samples/${sampleId}`}>
+                  {withSample(samplesByID, sampleId, sample => sample.name, <span>Loading…</span>)}
+                </Link>
+                {i !== container.samples.length - 1 &&
+                  ', '
+                }
+              </>
+            )}
+          </Descriptions.Item>
           <Descriptions.Item label="" span={3}>
               <ContainerHierarchy key={id} container={isLoaded ? container : null} />
           </Descriptions.Item>
