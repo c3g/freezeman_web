@@ -302,7 +302,7 @@ const SampleEditContent = ({token, samplesByID, add, update}) => {
               step={0.001}
             />
           </Form.Item>
-          {formErrors.non_field_errors &&
+          {formErrors?.non_field_errors &&
             <Alert
               showIcon
               type="error"

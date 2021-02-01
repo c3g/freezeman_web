@@ -163,7 +163,7 @@ const ContainerEditContent = ({token, containerKinds, containersByID, add, updat
           <Item label="Upd. Comment" {...props("update_comment")}>
             <TextArea />
           </Item>
-          {formErrors.non_field_errors &&
+          {formErrors?.non_field_errors &&
             <Alert
               showIcon
               type="error"

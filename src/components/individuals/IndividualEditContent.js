@@ -157,7 +157,7 @@ const IndividualEditContent = ({token, individualsByID, add, update}) => {
               onFocus={onFocusIndividual}
             />
           </Form.Item>
-          {formErrors.non_field_errors &&
+          {formErrors?.non_field_errors &&
             <Alert
               showIcon
               type="error"
