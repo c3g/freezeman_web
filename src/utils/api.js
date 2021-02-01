@@ -179,16 +179,6 @@ function createAPIError(response) {
   return error;
 }
 
-function parseDjangoError(html) {
-  const $ = cheerio.load(html)
-  const text = $('.exception_value').text()
-  const transformed = text.replace(/'(\w+)':/g, '$1:')
-  /* Using eval() is hidious but the thing that Django
-   * returns isn't JSON -_- */
-  const errors = eval(`(${transformed})`)
-  return map(es => es.join(', '), errors)
-}
-
 function attachData(response) {
   const contentType = response.headers.get('content-type') || '' ;
   const isJSON = contentType.includes('/json')
