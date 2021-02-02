@@ -58,7 +58,7 @@ function getInputFilterProps(column, descriptions, filters, setFilter, setFilter
         <Input
           ref={inputRef}
           allowClear
-          placeholder={`Search ${dataIndex}`}
+          placeholder={`Search ${description.label}`}
           style={{ marginRight: 8 }}
           value={value}
           onChange={e => onSearch(e.target.value)}
