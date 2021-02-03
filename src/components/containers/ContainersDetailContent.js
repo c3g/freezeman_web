@@ -60,7 +60,7 @@ const ContainersDetailContent = ({containersByID, samplesByID, get, listParents}
           </Descriptions.Item>
           <Descriptions.Item label="Kind">{container.kind}</Descriptions.Item>
           <Descriptions.Item label="Comment" span={3}>{container.comment}</Descriptions.Item>
-          <Descriptions.Item label="Sample" span={3}>
+          <Descriptions.Item label="Sample(s)" span={3}>
             {container.samples && container.samples.map((sampleId, i) =>
               <>
                 <Link key={sampleId} to={`/samples/${sampleId}`}>
