@@ -49,7 +49,7 @@ const getTableColumns = (containersByID, individualsByID) => [
       title: "Individual",
       dataIndex: ["individual", "name"],
       sorter: true,
-      render: (text, individual)=>
+      render: (text, individual) =>
         <Link to={`/individuals/${individual.id}`}>
           {text}
         </Link>
@@ -63,7 +63,7 @@ const getTableColumns = (containersByID, individualsByID) => [
       title: "Container Barcode",
       dataIndex: ["container", "barcode"],
       sorter: true,
-      render: (text, container )=>
+      render: (text, container) =>
         <Link to={`/containers/${container.id}`}>
           {text}
         </Link>
