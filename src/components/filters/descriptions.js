@@ -24,11 +24,7 @@ export const SAMPLE_FILTERS = {
     key: "container__name",
     label: "Container Name",
   },
-<<<<<<< HEAD
   container__barcode: {
-=======
-  container_barcode: {
->>>>>>> master
     type: FILTER_TYPE.INPUT,
     key: "container__barcode",
     label: "Container Barcode",
