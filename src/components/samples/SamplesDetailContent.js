@@ -213,7 +213,7 @@ function renderTimelineLabel(version, usersByID) {
   return (
     <div>
       <div><Text type="secondary">{dateToString(version.revision.date_created)}</Text></div>
-      <div><Text disabled style={usernameStyle}><UserOutlined /> {user.username}</Text></div>
+      <div><Text disabled style={usernameStyle}><UserOutlined /> {user?.username ?? '[Loading]'}</Text></div>
     </div>
   )
 }
