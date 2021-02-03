@@ -64,6 +64,8 @@ export const setSortBy = thenList((key, order) => {
 });
 
 export const setFilter = thenList((name, value) => {
+    if(Array.isArray(name))
+        name = name.join("__")
     return {
         type: SET_FILTER,
         data: { name, value}

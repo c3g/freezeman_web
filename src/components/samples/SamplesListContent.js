@@ -47,26 +47,26 @@ const getTableColumns = (containersByID, individualsByID) => [
     },
     {
       title: "Individual",
-      dataIndex: "individual__name",
+      dataIndex: ["individual", "name"],
       sorter: true,
-      render: (individual__name, sample)=>
-        <Link to={`/individuals/${sample.individual}`}>
-          {individual__name}
+      render: (text, individual)=>
+        <Link to={`/individuals/${individual.id}`}>
+          {text}
         </Link>
     },
     {
       title: "Container Name",
-      dataIndex: "container__name",
+      dataIndex: ["container", "name"],
       sorter: true,
     },
     {
       title: "Container Barcode",
-      dataIndex: "container",
+      dataIndex: ["container", "barcode"],
       sorter: true,
-      render: container => (container &&
-          <Link to={`/containers/${container}`}>
-            {withContainer(containersByID, container, container => container.barcode, "loading...")}
-          </Link>),
+      render: (text, container )=>
+        <Link to={`/containers/${container.id}`}>
+          {text}
+        </Link>
     },
     {
       title: "Coords",
@@ -74,15 +74,15 @@ const getTableColumns = (containersByID, individualsByID) => [
       sorter: true,
       width: 70,
     },
-    {
-      title: "Vol. (µL)",
-      dataIndex: "volume_history",
-      sorter: true,
-      align: "right",
-      className: "table-column-numbers",
-      render: vh => parseFloat(vh[vh.length - 1].volume_value).toFixed(3),
-      width: 100,
-    },
+    // {
+    //   title: "Vol. (µL)",
+    //   dataIndex: "volume_history",
+    //   sorter: true,
+    //   align: "right",
+    //   className: "table-column-numbers",
+    //   render: vh => parseFloat(vh[vh.length - 1].volume_value).toFixed(3),
+    //   width: 100,
+    // },
     {
       title: "Conc. (ng/µL)",
       dataIndex: "concentration",

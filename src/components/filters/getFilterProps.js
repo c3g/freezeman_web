@@ -14,7 +14,11 @@ import {FILTER_TYPE} from "../../constants";
 const EMPTY_VALUE = '__EMPTY_VALUE__'
 
 export default function getFilterProps(column, descriptions, filters, setFilter, setFilterOption) {
-  const description = descriptions[column.dataIndex];
+  let dataIndex = column.dataIndex
+  if(Array.isArray(dataIndex))
+    dataIndex = dataIndex.join("__")
+  const description = descriptions[dataIndex]
+
   if (!description)
     return undefined;
   switch (description.type) {
@@ -58,7 +62,7 @@ function getInputFilterProps(column, descriptions, filters, setFilter, setFilter
         <Input
           ref={inputRef}
           allowClear
-          placeholder={`Search ${description.label}`}
+          placeholder={`Search ${description?.label}`}
           style={{ marginRight: 8 }}
           value={value}
           onChange={e => onSearch(e.target.value)}
