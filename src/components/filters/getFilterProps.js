@@ -14,9 +14,7 @@ import {FILTER_TYPE} from "../../constants";
 const EMPTY_VALUE = '__EMPTY_VALUE__'
 
 export default function getFilterProps(column, descriptions, filters, setFilter, setFilterOption) {
-  let dataIndex = column.dataIndex
-  if(Array.isArray(dataIndex))
-    dataIndex = dataIndex.join("__")
+  const dataIndex = dataIndexToString(column.dataIndex)
   const description = descriptions[dataIndex]
 
   if (!description)
@@ -35,7 +33,7 @@ export default function getFilterProps(column, descriptions, filters, setFilter,
 }
 
 function getInputFilterProps(column, descriptions, filters, setFilter, setFilterOption) {
-  const dataIndex = column.dataIndex;
+  const dataIndex = dataIndexToString(column.dataIndex);
   const description = descriptions[dataIndex];
   const value = filters[dataIndex]?.value;
   const options = filters[dataIndex]?.options;
@@ -62,7 +60,7 @@ function getInputFilterProps(column, descriptions, filters, setFilter, setFilter
         <Input
           ref={inputRef}
           allowClear
-          placeholder={`Search ${description?.label}`}
+          placeholder={`Search ${description.label}`}
           style={{ marginRight: 8 }}
           value={value}
           onChange={e => onSearch(e.target.value)}
@@ -91,7 +89,7 @@ function getInputFilterProps(column, descriptions, filters, setFilter, setFilter
 }
 
 function getSelectFilterProps(column, descriptions, filters, setFilter) {
-  const dataIndex = column.dataIndex;
+  const dataIndex = dataIndexToString(column.dataIndex);
   const description = descriptions[dataIndex];
   const value = filters[dataIndex]?.value;
 
@@ -134,7 +132,7 @@ function getSelectFilterProps(column, descriptions, filters, setFilter) {
 }
 
 function getRadioFilterProps(column, descriptions, filters, setFilter) {
-  const dataIndex = column.dataIndex;
+  const dataIndex = dataIndexToString(column.dataIndex);
   const description = descriptions[dataIndex];
   const value = filters[dataIndex]?.value;
 
@@ -179,7 +177,7 @@ function getRadioFilterProps(column, descriptions, filters, setFilter) {
 }
 
 function getRangeFilterProps(column, descriptions, filters, setFilter) {
-  const dataIndex = column.dataIndex;
+  const dataIndex = dataIndexToString(column.dataIndex);
   const description = descriptions[dataIndex];
   const value = filters[dataIndex]?.value;
   const minValue = value?.min
@@ -262,4 +260,10 @@ function nullize(v) {
   if (v === '')
     return null
   return v
+}
+
+function dataIndexToString(dataIndex) {
+  return Array.isArray(dataIndex) ?
+      dataIndex.join("__") :
+      dataIndex
 }
