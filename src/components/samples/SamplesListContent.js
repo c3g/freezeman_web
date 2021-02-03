@@ -47,12 +47,12 @@ const getTableColumns = (containersByID, individualsByID) => [
     },
     {
       title: "Individual",
-      dataIndex: "individual",
+      dataIndex: "individual__name",
       sorter: true,
-      render: individual => (individual &&
-          <Link to={`/individuals/${individual}`}>
-            {withIndividual(individualsByID, individual, individual => individual.name, "loading...")}
-          </Link>),
+      render: (individual__name, sample)=>
+        <Link to={`/individuals/${sample.individual}`}>
+          {individual__name}
+        </Link>
     },
     {
       title: "Container Name",

@@ -14,7 +14,7 @@ export const SAMPLE_FILTERS = {
     key: "name",
     label: "Name",
   },
-  individual: {
+  individual__name: {
     type: FILTER_TYPE.INPUT,
     key: "individual__name",
     label: "Individual Name",
