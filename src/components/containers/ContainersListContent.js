@@ -1,7 +1,7 @@
 import React from "react";
 import {connect} from "react-redux";
 import {Link} from "react-router-dom";
-import {Button} from "antd";
+import {Button, Spin} from "antd";
 
 import AppPageHeader from "../AppPageHeader";
 import PageContent from "../PageContent";
@@ -44,7 +44,7 @@ const getTableColumns = (samplesByID, containersByID, containerKinds) => [
             {samples.map((id, i) =>
               <React.Fragment key={id}>
                 <Link to={`/samples/${id}`}>
-                  {withSample(samplesByID, id, sample => sample.name, <span>Loading…</span>)}
+                  {withSample(samplesByID, id, sample => sample.name, <Spin size="small" />)}
                 </Link>
                 {i !== samples.length - 1 ? ', ' : ''}
               </React.Fragment>
@@ -67,7 +67,7 @@ const getTableColumns = (samplesByID, containersByID, containerKinds) => [
       sorter: true,
       render: location => (location &&
         <Link to={`/containers/${location}`}>
-          {withContainer(containersByID, location, container => container.name, "Loading...")}
+          {withContainer(containersByID, location, container => container.name, <Spin size="small" />)}
         </Link>),
     },
     {

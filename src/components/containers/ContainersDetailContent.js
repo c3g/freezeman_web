@@ -2,7 +2,7 @@ import React from "react";
 import {connect} from "react-redux";
 import {useHistory, useParams, Link} from "react-router-dom";
 
-import {Space, Descriptions} from "antd";
+import {Space, Spin, Descriptions} from "antd";
 import "antd/es/descriptions/style/css";
 import "antd/es/space/style/css";
 
@@ -52,7 +52,7 @@ const ContainersDetailContent = ({containersByID, get, listParents}) => {
           <Descriptions.Item label="Location" span={2}>
             {container.location ?
               <Link to={`/containers/${container.location}`}>
-                {withContainer(containersByID, container.location, container => container.barcode, "Loading...")}
+                {withContainer(containersByID, container.location, container => container.barcode, <Spin size="small" />)}
               </Link>
               : "—"}
             {container.coordinates && ` at ${container.coordinates}`}

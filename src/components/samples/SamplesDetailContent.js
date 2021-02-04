@@ -10,6 +10,7 @@ import {
   Empty,
   Row,
   Space,
+  Spin,
   Tag,
   Timeline,
   Typography
@@ -126,7 +127,7 @@ const SamplesDetailContent = ({samplesByID, containersByID, individualsByID, use
                     individualsByID,
                     sample.individual,
                     individual => individual.name,
-                    "Loading..."
+                    <Spin size="small" />
                   )
                 }
               </Link>
@@ -143,7 +144,7 @@ const SamplesDetailContent = ({samplesByID, containersByID, individualsByID, use
           <Descriptions.Item label="Container">
             {sample.container &&
               <Link to={`/containers/${sample.container}`}>
-                {withContainer(containersByID, sample.container, container => container.barcode, "Loading...")}
+                {withContainer(containersByID, sample.container, container => container.barcode, <Spin size="small" />)}
               </Link>
             }
           </Descriptions.Item>
@@ -157,13 +158,13 @@ const SamplesDetailContent = ({samplesByID, containersByID, individualsByID, use
         <Descriptions bordered={true} size="small" title="Extraction Details" style={{marginTop: "24px"}}>
           <Descriptions.Item label="Extracted From">
             <Link to={`/samples/${sample.extracted_from}`}>
-              {withSample(samplesByID, sample.extracted_from, sample => sample.name, "Loading...")}
+              {withSample(samplesByID, sample.extracted_from, sample => sample.name, <Spin size="small" />)}
             </Link> 
             {" "}(
             {withContainer(containersByID, 
               withSample(samplesByID, sample.extracted_from, sample => sample.container),
               container => container.barcode,
-              "... ")}
+              <Spin size="small" />)}
             {withSample(samplesByID, sample.extracted_from, sample => sample.coordinates) &&
               ` at ${withSample(samplesByID, sample.extracted_from, sample => sample.coordinates)}`}
             )

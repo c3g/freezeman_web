@@ -42,7 +42,7 @@ const IndividualsDetailContent = ({individualsByID, get}) => {
                     {individual.mother ?
                         (
                         <Link to={`/individuals/${individual.mother}`}>
-                            {withIndividual(individualsByID, individual.mother, individual => individual.name, "Loading...")}
+                            {withIndividual(individualsByID, individual.mother, individual => individual.name, <Spin size="small" />)}
                         </Link>
                         ) :
                         "—"}
@@ -51,7 +51,7 @@ const IndividualsDetailContent = ({individualsByID, get}) => {
                     {individual.father ?
                         (
                         <Link to={`/individuals/${individual.father}`}>
-                            {withIndividual(individualsByID, individual.father, individual => individual.name, "Loading...")}
+                            {withIndividual(individualsByID, individual.father, individual => individual.name, <Spin size="small" />)}
                         </Link>
                         ) :
                         "—"}

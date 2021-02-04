@@ -172,7 +172,7 @@ function UserReport({user, expandedGroups, setExpandedGroups}) {
         <div style={{ width: '100%' }}>
           <Card>
             <Timeline
-              pending={(isFetching && !versions) ? "Loading..." : undefined}
+              pending={(isFetching && !versions) ? <Spin size="small" /> : undefined}
               mode="left"
               style={{ marginLeft: 0, width: '100%' }}
             >
