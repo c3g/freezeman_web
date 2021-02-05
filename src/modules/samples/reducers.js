@@ -83,7 +83,7 @@ export const samples = (
             const currentItems = hasChanged ? [] : state.items;
             /* samples[].container stored in ../containers/reducers.js */
             const newItemsByID = map(
-                s => ({ ...s, container: s.container.id }),
+                s => ({ ...s, container: s.container }),
                 indexByID(action.data.results)
             );
             const itemsByID = merge(state.itemsByID, [], newItemsByID);
