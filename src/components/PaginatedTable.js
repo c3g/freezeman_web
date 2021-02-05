@@ -5,6 +5,8 @@ import {Pagination, Table} from "antd";
 import "antd/es/pagination/style/css";
 import "antd/es/table/style/css";
 
+import dataIndexToString from "../utils/dataIndexToString";
+
 const pageSize = 10;
 
 const propTypes = {
@@ -72,9 +74,13 @@ function PaginatedTable ({
   };
 
   const onChangeTable = (pagination, filters, sorter) => {
-    const key = sorter.column?.dataIndex
+    const dataIndex = sorter.column?.dataIndex
+    const key = dataIndex ? dataIndexToString(dataIndex) : dataIndex
     const order = sorter.order
-    if (sortBy.key !== key || sortBy.order !== order)
+
+    const sortByKey = sortBy.key ? dataIndexToString(sortBy.key) : sortBy.key
+
+    if (sortByKey !== key || sortBy.order !== order)
       onChangeSort(key, order)
   };
 

@@ -8,14 +8,8 @@ const prefixByOrder = {
 }
 
 export default function serializeSortByParams(sortBy) {
-  let key = sortBy.key
-  const order = sortBy.order
-  if (key === undefined || order === undefined)
+  if (sortBy.key === undefined || sortBy.order === undefined)
     return undefined
-
-  if (Array.isArray(key))
-    key = key.join("__")
-
-  const prefix = prefixByOrder[order]
-  return prefix + key
+  const prefix = prefixByOrder[sortBy.order]
+  return prefix + sortBy.key
 }

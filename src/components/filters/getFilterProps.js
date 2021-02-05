@@ -10,6 +10,7 @@ import "antd/es/tooltip/style/css";
 import {SearchOutlined} from "@ant-design/icons";
 
 import {FILTER_TYPE} from "../../constants";
+import dataIndexToString from "../../utils/dataIndexToString";
 
 const EMPTY_VALUE = '__EMPTY_VALUE__'
 
@@ -260,10 +261,4 @@ function nullize(v) {
   if (v === '')
     return null
   return v
-}
-
-function dataIndexToString(dataIndex) {
-  return Array.isArray(dataIndex) ?
-      dataIndex.join("__") :
-      dataIndex
 }
