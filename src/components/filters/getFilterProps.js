@@ -10,12 +10,11 @@ import "antd/es/tooltip/style/css";
 import {SearchOutlined} from "@ant-design/icons";
 
 import {FILTER_TYPE} from "../../constants";
-import dataIndexToString from "../../utils/dataIndexToString";
 
 const EMPTY_VALUE = '__EMPTY_VALUE__'
 
 export default function getFilterProps(column, descriptions, filters, setFilter, setFilterOption) {
-  const dataIndex = dataIndexToString(column.dataIndex)
+  const dataIndex = column.dataIndex
   const description = descriptions[dataIndex]
 
   if (!description)
@@ -34,7 +33,7 @@ export default function getFilterProps(column, descriptions, filters, setFilter,
 }
 
 function getInputFilterProps(column, descriptions, filters, setFilter, setFilterOption) {
-  const dataIndex = dataIndexToString(column.dataIndex);
+  const dataIndex = column.dataIndex;
   const description = descriptions[dataIndex];
   const value = filters[dataIndex]?.value;
   const options = filters[dataIndex]?.options;
@@ -90,7 +89,7 @@ function getInputFilterProps(column, descriptions, filters, setFilter, setFilter
 }
 
 function getSelectFilterProps(column, descriptions, filters, setFilter) {
-  const dataIndex = dataIndexToString(column.dataIndex);
+  const dataIndex = column.dataIndex;
   const description = descriptions[dataIndex];
   const value = filters[dataIndex]?.value;
 
@@ -133,7 +132,7 @@ function getSelectFilterProps(column, descriptions, filters, setFilter) {
 }
 
 function getRadioFilterProps(column, descriptions, filters, setFilter) {
-  const dataIndex = dataIndexToString(column.dataIndex);
+  const dataIndex = column.dataIndex;
   const description = descriptions[dataIndex];
   const value = filters[dataIndex]?.value;
 
@@ -178,7 +177,7 @@ function getRadioFilterProps(column, descriptions, filters, setFilter) {
 }
 
 function getRangeFilterProps(column, descriptions, filters, setFilter) {
-  const dataIndex = dataIndexToString(column.dataIndex);
+  const dataIndex = column.dataIndex;
   const description = descriptions[dataIndex];
   const value = filters[dataIndex]?.value;
   const minValue = value?.min
