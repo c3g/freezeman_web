@@ -210,7 +210,7 @@ const SamplesDetailContent = ({samplesByID, containersByID, individualsByID, use
 
 function renderTimelineLabel(version, usersByID) {
   const user = usersByID[version.revision.user]
-  const username = user ? user.username : ""  // in case usersByID is still loading asynchronously
+  const username = user?.username || "Loading..."
 
   return (
     <div>
