@@ -110,11 +110,6 @@ export const CONTAINER_FILTERS = {
     key: "coordinates",
     label: "Coordinates",
   },
-  samples: {
-    type: FILTER_TYPE.INPUT,
-    key: "samples__name",
-    label: "Sample name",
-  },
 }
 
 export const INDIVIDUAL_FILTERS = {
