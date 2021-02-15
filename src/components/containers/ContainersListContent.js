@@ -37,23 +37,7 @@ const getTableColumns = (samplesByID, containersByID, containerKinds) => [
     },
     {
       title: "Nb. of samples",
-      dataIndex: "samples",
-      render: (samples, container) => {
-        // TODO: include children containers in the count
-        samples.length
-      }
-        // (CONTAINER_KIND_SHOW_SAMPLE.includes(container.kind) && samples.length > 0 &&
-        //   <>
-        //     {samples.map((id, i) =>
-        //       <React.Fragment key={id}>
-        //         <Link to={`/samples/${id}`}>
-        //           {withSample(samplesByID, id, sample => sample.name, <span>Loading…</span>)}
-        //         </Link>
-        //         {i !== samples.length - 1 ? ', ' : ''}
-        //       </React.Fragment>
-        //     )}
-        //   </>
-        //   ),
+      dataIndex: "nb_samples",
     },
     {
       title: "Kind",
