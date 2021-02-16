@@ -36,8 +36,24 @@ const getTableColumns = (samplesByID, containersByID, containerKinds) => [
       render: (barcode, container) => <Link to={`/containers/${container.id}`}>{barcode}</Link>,
     },
     {
-      title: "Nb. of samples",
-      dataIndex: "nb_samples",
+      title: "Sample",
+      dataIndex: "samples",
+      render: (samples, container) => {
+        if (CONTAINER_KIND_SHOW_SAMPLE.includes(container.kind) && samples.length > 0) {
+          return <>
+              {samples.map((id, i) =>
+                <React.Fragment key={id}>
+                  <Link to={`/samples/${id}`}>
+                    {withSample(samplesByID, id, sample => sample.name, <span>Loading…</span>)}
+                  </Link>
+                  {i !== samples.length - 1 ? ', ' : ''}
+                </React.Fragment>
+              )}
+            </>
+        } else {
+          return container.nb_samples;
+        }
+      }
     },
     {
       title: "Kind",
