@@ -33,7 +33,7 @@ import PageContent from "../PageContent";
 import * as Options from "../../utils/options";
 import {add, update} from "../../modules/samples/actions";
 import {sample as EMPTY_SAMPLE} from "../../models";
-import {BIOSPECIMEN_TYPE, TISSUE_SOURCE} from "../../constants";
+import {SAMPLE_KIND, TISSUE_SOURCE} from "../../constants";
 import api, {withToken} from "../../utils/api";
 
 const requiredRules = [{ required: true, message: 'Missing field' }]
@@ -206,7 +206,7 @@ const SampleEditContent = ({token, samplesByID, add, update}) => {
           </Form.Item>
           <Form.Item label="Biosp. Type" {...props("biospecimen_type")} rules={requiredRules}>
             <Select>
-              {BIOSPECIMEN_TYPE.map(type =>
+              {SAMPLE_KIND.map(type =>
                 <Option key={type} value={type}>{type}</Option>
               )}
             </Select>

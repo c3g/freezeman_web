@@ -108,7 +108,7 @@ const SamplesDetailContent = ({samplesByID, containersByID, individualsByID, use
       <Descriptions bordered={true} size="small">
           <Descriptions.Item label="Name">{sample.name}</Descriptions.Item>
           <Descriptions.Item label="Alias">{sample.alias}</Descriptions.Item>
-          <Descriptions.Item label="Biospecimen Type">{sample.biospecimen_type}</Descriptions.Item>
+          <Descriptions.Item label="Sample Kind">{sample.sample_kind}</Descriptions.Item>
           <Descriptions.Item label="Volume">{volume} µL</Descriptions.Item>
           <Descriptions.Item label="Concentration">
               {sample.concentration == null

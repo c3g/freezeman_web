@@ -59,6 +59,10 @@ const api = {
     search: q => get("/samples/search/", { q }),
   },
 
+  sampleKinds: {
+    list: () => get("/sample-kinds/"),
+  },
+
   users: {
     list: (options, abort) => get("/users", options, { abort }),
     listVersions: userId => get(`/versions?revision__user=${userId}&limit=999999`), // TODO: handle versions?

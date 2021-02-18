@@ -1,13 +1,13 @@
-import {FILTER_TYPE, BIOSPECIMEN_TYPE, SEX, TAXON} from "../../constants";
+import {FILTER_TYPE, SAMPLE_KIND, SEX, TAXON} from "../../constants";
 
 export const SAMPLE_FILTERS = {
-  biospecimen_type: {
+  sample_kind__name: {
     type: FILTER_TYPE.SELECT,
-    key: "biospecimen_type",
+    key: "sample_kind__name",
     label: "Type",
     mode: "multiple",
     placeholder: "All",
-    options: BIOSPECIMEN_TYPE.map(x => ({ label: x, value: x })),
+    options: SAMPLE_KIND.map(x => ({ label: x, value: x })),
   },
   name: {
     type: FILTER_TYPE.INPUT,

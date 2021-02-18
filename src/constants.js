@@ -8,7 +8,7 @@ export const FILTER_TYPE = {
   INPUT: "INPUT",
 }
 
-export const BIOSPECIMEN_TYPE = [
+export const SAMPLE_KIND = [
   "DNA",
   "RNA",
   "BLOOD",
