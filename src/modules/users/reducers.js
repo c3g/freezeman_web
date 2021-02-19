@@ -43,18 +43,20 @@ export const users = (
     case USERS.LIST.REQUEST:
       return { ...state, isFetching: true };
     case USERS.LIST.RECEIVE: {
-      const hasChanged = state.totalCount !== action.data.count;
+      const isTable = action.meta.isTable !== false
+      const totalCount = isTable ? action.data.count : state.totalCount;
+      const hasChanged = state.totalCount !== action.data.count && isTable;
       const currentItems = hasChanged ? [] : state.items;
       const results = action.data.results.map(preprocessUser)
       const itemsByID = merge(state.itemsByID, [], indexByID(results, "id"));
       const itemsID = results.map(r => r.id)
-      const items = mergeArray(currentItems, action.meta.offset, itemsID)
+      const items = isTable ? mergeArray(currentItems, action.meta.offset, itemsID) : currentItems
       return {
         ...state,
         itemsByID,
         items,
-        totalCount: action.data.count,
-        page: action.meta,
+        totalCount,
+        page: isTable ? action.meta : state.page,
         isFetching: false,
       };
     }
