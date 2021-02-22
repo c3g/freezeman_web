@@ -5,12 +5,23 @@ import {networkAction} from "./actions";
 import api from ".//api"
 import wait from "./wait"
 
+const THROTTLE_DELAY = 20
+const PAGE_LIMIT = 1000000 // We don't want to handle pagination here
+
 let store = undefined
 
 /** Initialized in src/index.js */
 export const setStore = value => { store = value }
 
 function createWithItem(type, apiType) {
+  /*
+   * Create a withXxx() helpers.
+   * Requests are accumulated in `ids` for `THROTTLE_DELAY`
+   * in `requestItem`, then sent out in batch in `fetchList`.
+   * This allows to make a single request with multiple items
+   * rather than multiple single-item requests.
+   */
+
   let ids = new Set()
   let delayedAction
 
@@ -26,9 +37,9 @@ function createWithItem(type, apiType) {
 
   const fetchList = () => {
     delayedAction =
-      wait(20).then(async () => {
+      wait(THROTTLE_DELAY).then(async () => {
         const params = {
-          limit: 25,
+          limit: PAGE_LIMIT,
           id__in: Array.from(ids).join(',')
         }
         const listAction = store.dispatch(networkAction(type.LIST,
@@ -42,7 +53,6 @@ function createWithItem(type, apiType) {
         if (ids.size > 0)
           fetchList()
       })
-    console.log('fetchList', delayedAction)
   }
 
   /**
