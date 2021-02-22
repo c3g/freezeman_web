@@ -22,6 +22,7 @@
   "homepage": "https://github.com/c3g/fms_web#readme",
   "dependencies": {
     "@ant-design/icons": "^4.2.1",
+    "@reduxjs/toolkit": "^1.5.0",
     "antd": "^4.4.3",
     "cheerio": "^1.0.0-rc.5",
     "cross-fetch": "^3.0.6",
