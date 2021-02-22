@@ -60,7 +60,25 @@ const ContainersDetailContent = ({containersByID, samplesByID, get, listParents}
           </Descriptions.Item>
           <Descriptions.Item label="Kind">{container.kind}</Descriptions.Item>
           <Descriptions.Item label="Comment" span={3}>{container.comment}</Descriptions.Item>
-          <Descriptions.Item label="Sample(s)" span={3}>
+          <Descriptions.Item label="Content" span={3}>
+            {(container.children && container.children.length > 0 )?
+              <div><b>Container(s)</b></div>
+              : ""}
+            {container.children && container.children.map((childId, i) =>
+              <>
+                <Link key={childId} to={`/containers/${childId}`}>
+                  {withContainer(containersByID, childId, container => container.name, <span>Loading…</span>)}
+                </Link>
+                {i !== container.children.length - 1 &&
+                ', '
+                }
+              </>
+            )
+            }
+            {(container.samples && container.samples.length > 0 )?
+              <div><b>Sample(s)</b></div>
+              : ""}
+
             {container.samples && container.samples.map((sampleId, i) =>
               <>
                 <Link key={sampleId} to={`/samples/${sampleId}`}>
