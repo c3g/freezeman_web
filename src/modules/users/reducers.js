@@ -43,24 +43,39 @@ export const users = (
     case USERS.LIST.REQUEST:
       return { ...state, isFetching: true };
     case USERS.LIST.RECEIVE: {
-      const isTable = action.meta.isTable !== false
-      const totalCount = isTable ? action.data.count : state.totalCount;
-      const hasChanged = state.totalCount !== action.data.count && isTable;
+      const results = action.data.results.map(preprocess)
+      const itemsByID = merge(state.itemsByID, [], indexByID(results, "id"));
+      return {
+        ...state,
+        itemsByID,
+        isFetching: false,
+        error: undefined,
+      };
+    }
+    case USERS.LIST.ERROR:
+      return { ...state, isFetching: false, error: action.error };
+
+    case USERS.LIST_TABLE.REQUEST:
+      return { ...state, isFetching: true };
+    case USERS.LIST_TABLE.RECEIVE: {
+      const totalCount = action.data.count;
+      const hasChanged = state.totalCount !== action.data.count;
       const currentItems = hasChanged ? [] : state.items;
-      const results = action.data.results.map(preprocessUser)
+      const results = action.data.results.map(preprocess)
       const itemsByID = merge(state.itemsByID, [], indexByID(results, "id"));
       const itemsID = results.map(r => r.id)
-      const items = isTable ? mergeArray(currentItems, action.meta.offset, itemsID) : currentItems
+      const items = mergeArray(currentItems, action.meta.offset, itemsID)
       return {
         ...state,
         itemsByID,
         items,
         totalCount,
-        page: isTable ? action.meta : state.page,
+        page: action.meta,
         isFetching: false,
+        error: undefined,
       };
     }
-    case USERS.LIST.ERROR:
+    case USERS.LIST_TABLE.ERROR:
       return { ...state, isFetching: false, error: action.error };
 
     case USERS.LIST_VERSIONS.REQUEST:
@@ -82,6 +97,6 @@ export const users = (
   }
 };
 
-function preprocessUser(user) {
+function preprocess(user) {
   return user
 }

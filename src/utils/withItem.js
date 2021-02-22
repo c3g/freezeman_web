@@ -6,7 +6,6 @@ import api from ".//api"
 import wait from "./wait"
 
 const THROTTLE_DELAY = 20
-const PAGE_LIMIT = 1000000 // We don't want to handle pagination here
 
 let store = undefined
 
@@ -39,13 +38,9 @@ function createWithItem(type, apiType) {
     delayedAction =
       wait(THROTTLE_DELAY).then(async () => {
         const params = {
-          limit: PAGE_LIMIT,
           id__in: Array.from(ids).join(',')
         }
-        const listAction = store.dispatch(networkAction(type.LIST,
-            apiType.list(params),
-            { meta: { ...params, isTable: false } }
-        ))
+        const listAction = store.dispatch(type.list(params))
         ids = new Set()
         await listAction
         delayedAction = undefined

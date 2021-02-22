@@ -39,7 +39,7 @@ export const samples = (
             return { ...state, error: undefined, isFetching: true };
         case SAMPLES.ADD.RECEIVE:
             return merge({ ...state, isFetching: false, }, ['itemsByID', action.data.id],
-                preprocessSample(action.data));
+                preprocess(action.data));
         case SAMPLES.ADD.ERROR:
             return { ...state, error: action.error, isFetching: false };
 
@@ -79,29 +79,40 @@ export const samples = (
         case SAMPLES.LIST.REQUEST:
             return { ...state, isFetching: true, };
         case SAMPLES.LIST.RECEIVE: {
-            const isTable = action.meta.isTable !== false
-            const totalCount = isTable ? action.data.count : state.totalCount;
-            const hasChanged = state.totalCount !== action.data.count && isTable;
+            /* samples[].container stored in ../containers/reducers.js */
+            const results = action.data.results.map(preprocess)
+            const itemsByID = merge(state.itemsByID, [], indexByID(results));
+            return { ...state, itemsByID, isFetching: false, error: undefined };
+        }
+        case SAMPLES.LIST.ERROR:
+            return { ...state, isFetching: false, error: action.error, };
+
+        case SAMPLES.LIST_TABLE.REQUEST:
+            return { ...state, isFetching: true, };
+        case SAMPLES.LIST_TABLE.RECEIVE: {
+            const totalCount = action.data.count;
+            const hasChanged = state.totalCount !== action.data.count;
             const currentItems = hasChanged ? [] : state.items;
             /* samples[].container stored in ../containers/reducers.js */
-            const results = action.data.results.map(preprocessSample)
+            const results = action.data.results.map(preprocess)
             const newItemsByID = map(
                 s => ({ ...s, container: s.container }),
                 indexByID(results)
             );
             const itemsByID = merge(state.itemsByID, [], newItemsByID);
             const itemsID = action.data.results.map(r => r.id)
-            const items = isTable ? mergeArray(currentItems, action.meta.offset, itemsID) : currentItems
+            const items = mergeArray(currentItems, action.meta.offset, itemsID)
             return {
                 ...state,
                 itemsByID,
                 items,
                 totalCount,
-                page: isTable ? action.meta : state.page,
+                page: action.meta,
                 isFetching: false,
+                error: undefined,
             };
         }
-        case SAMPLES.LIST.ERROR:
+        case SAMPLES.LIST_TABLE.ERROR:
             return { ...state, isFetching: false, error: action.error, };
 
         case SAMPLES.LIST_VERSIONS.REQUEST:
@@ -127,7 +138,7 @@ export const samples = (
             return merge(state, ['itemsByID'], itemsByID);
         }
         case CONTAINERS.LIST_SAMPLES.RECEIVE: {
-            return merge(state, ['itemsByID'], indexByID(action.data.map(preprocessSample)));
+            return merge(state, ['itemsByID'], indexByID(action.data.map(preprocess)));
         }
         case CONTAINERS.LIST_SAMPLES.ERROR: {
             const itemsByID =
@@ -141,7 +152,7 @@ export const samples = (
     }
 };
 
-function preprocessSample(sample) {
+function preprocess(sample) {
     sample.isFetching = false;
     sample.isLoaded = true;
     return sample

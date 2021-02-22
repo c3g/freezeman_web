@@ -60,7 +60,7 @@ export const containers = (
       return merge(state, ['itemsByID', action.meta.id], { id: action.meta.id, isFetching: true });
     case CONTAINERS.GET.RECEIVE:
       return merge(state, ['itemsByID', action.meta.id],
-        { ...preprocessContainer(action.data), isFetching: false });
+        { ...preprocess(action.data), isFetching: false });
     case CONTAINERS.GET.ERROR:
       return merge(state, ['itemsByID', action.meta.id],
         { error: action.error, isFetching: false, didFail: true });
@@ -69,14 +69,14 @@ export const containers = (
       return { ...state, error: undefined, isFetching: true };
     case CONTAINERS.ADD.RECEIVE:
       return merge({ ...state, isFetching: false, }, ['itemsByID', action.data.id],
-        { ...preprocessContainer(action.data) });
+        { ...preprocess(action.data) });
     case CONTAINERS.ADD.ERROR:
       return { ...state, error: action.error, isFetching: false };
 
     case CONTAINERS.UPDATE.REQUEST:
       return merge(state, ['itemsByID', action.meta.id], { id: action.meta.id, isFetching: true });
     case CONTAINERS.UPDATE.RECEIVE:
-      return merge(state, ['itemsByID', action.meta.id], { ...preprocessContainer(action.data), isFetching: false, versions: undefined });
+      return merge(state, ['itemsByID', action.meta.id], { ...preprocess(action.data), isFetching: false, versions: undefined });
     case CONTAINERS.UPDATE.ERROR:
       return merge(state, ['itemsByID', action.meta.id],
         { error: action.error, isFetching: false });
@@ -109,28 +109,39 @@ export const containers = (
     case CONTAINERS.LIST.REQUEST:
       return { ...state, isFetching: true };
     case CONTAINERS.LIST.RECEIVE: {
-      const isTable = action.meta.isTable !== false
-      const totalCount = isTable ? action.data.count : state.totalCount;
-      const hasChanged = state.totalCount !== action.data.count && isTable;
+      const results = action.data.results.map(preprocess)
+      const itemsByID = merge(state.itemsByID, [], indexByID(results, "id"));
+      return { ...state, itemsByID, isFetching: false, error: undefined };
+    }
+    case CONTAINERS.LIST.ERROR:
+      return { ...state, isFetching: false, error: action.error };
+
+    case CONTAINERS.LIST_TABLE.REQUEST:
+      return { ...state, isFetching: true };
+    case CONTAINERS.LIST_TABLE.RECEIVE: {
+      const totalCount = action.data.count;
+      const hasChanged = state.totalCount !== action.data.count;
       const currentItems = hasChanged ? [] : state.items;
-      const results = action.data.results.map(preprocessContainer)
+      const results = action.data.results.map(preprocess)
       const itemsByID = merge(state.itemsByID, [], indexByID(results, "id"));
       const itemsID = results.map(r => r.id)
-      const items = isTable ? mergeArray(currentItems, action.meta.offset, itemsID) : currentItems
+      const items = mergeArray(currentItems, action.meta.offset, itemsID)
       return {
         ...state,
         itemsByID,
         items,
         totalCount,
-        page: isTable ? action.meta : state.page,
+        page: action.meta,
         isFetching: false,
+        error: undefined,
       };
     }
-    case CONTAINERS.LIST.ERROR:
+    case CONTAINERS.LIST_TABLE.ERROR:
       return { ...state, isFetching: false, error: action.error };
 
     /* Normalize samples[].container */
-    case SAMPLES.LIST.RECEIVE: {
+    case SAMPLES.LIST.RECEIVE:
+    case SAMPLES.LIST_TABLE.RECEIVE: {
       const samples = action.data.results;
       const containers = samples.map(s => s.container).filter(Boolean)
       const itemsByID = merge(state.itemsByID, [], indexByID(containers, "id"));
@@ -140,7 +151,7 @@ export const containers = (
     case CONTAINERS.LIST_PARENTS.REQUEST:
       return merge(state, ['itemsByID', action.meta.id], { id: action.meta.id, isFetching: true });
     case CONTAINERS.LIST_PARENTS.RECEIVE: {
-      const parents = action.data.map(preprocessContainer);
+      const parents = action.data.map(preprocess);
       const parentsID = parents.map(p => p.id);
       const itemsByID = merge(state.itemsByID, [], indexByID(parents))
       return merge(state, ['itemsByID'],
@@ -162,7 +173,7 @@ export const containers = (
     }
     case CONTAINERS.LIST_CHILDREN.RECEIVE: {
       const container = state.itemsByID[action.meta.id];
-      const items = action.data.map(preprocessContainer);
+      const items = action.data.map(preprocess);
       const itemsByID = merge(state.itemsByID, [], indexByID(items))
       itemsByID[action.meta.id] = set(container, ['isFetching'], false);
       return merge(state, ['itemsByID'], itemsByID);
@@ -185,7 +196,7 @@ export const containers = (
   }
 };
 
-function preprocessContainer(container) {
+function preprocess(container) {
   container.isFetching = false
   container.isLoaded = true
   return container;
