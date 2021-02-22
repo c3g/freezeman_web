@@ -40,6 +40,14 @@ export const update = (id, user) => async (dispatch, getState) => {
         UPDATE, api.users.update(user), { meta: { id, ignoreError: 'APIError' }}));
 };
 
+export const updateSelf = (id, user) => async (dispatch, getState) => {
+    if (getState().users.itemsByID[id].isFetching)
+        return;
+
+    return await dispatch(networkAction(
+        UPDATE, api.users.updateSelf(user), { meta: { id, ignoreError: 'APIError' }}));
+};
+
 export const list = (options) => async (dispatch, getState) => {
     const params = { limit: 100000, ...options }
     return await dispatch(networkAction(LIST,

@@ -63,6 +63,7 @@ const api = {
     get: userId => get(`/users/${userId}/`),
     add: user => post("/users/", user),
     update: user => patch(`/users/${user.id}/`, user),
+    updateSelf: user => patch(`/users/update_self/`, user),
     list: (options, abort) => get("/users", options, { abort }),
     listVersions: userId => get(`/versions?revision__user=${userId}&limit=999999`), // TODO: handle versions?
   },

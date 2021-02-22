@@ -1,8 +1,7 @@
 import React, {useState, useRef} from "react";
 import {connect} from "react-redux";
 import {useHistory, useParams} from "react-router-dom";
-import {Alert, Button, Checkbox, Form, Input, Select, Tag, Typography} from "antd";
-const {Text} = Typography
+import {Alert, Button, Checkbox, Form, Input, Select} from "antd";
 
 import {withUser} from "../../utils/withItem"
 import AppPageHeader from "../AppPageHeader";
@@ -22,12 +21,13 @@ const requiredRules = [{ required: true, message: 'Missing field' }]
 const mapStateToProps = state => ({
   isFetching: state.users.isFetching,
   usersByID: state.users.itemsByID,
+  error: state.users.error,
   groups: Object.values(state.groups.itemsByID),
 });
 
 const actionCreators = {add, update};
 
-const UserEditContent = ({isFetching, groups, usersByID, add, update}) => {
+const UserEditContent = ({isFetching, groups, usersByID, error, add, update}) => {
   const history = useHistory();
   const {id} = useParams();
   const isAdding = id === undefined
@@ -56,14 +56,16 @@ const UserEditContent = ({isFetching, groups, usersByID, add, update}) => {
   }
 
   const onSubmit = () => {
-    const data = serialize(formData)
+    const data = serialize(formData, user)
     const action =
       isAdding ?
         add(data).then(user => { history.push(`/users/${user.id}`) }) :
         update(id, data).then(() => { history.push(`/users/${id}`) })
     action
     .then(() => { setFormErrors({}) })
-    .catch(err => { setFormErrors(err.data || {}) })
+    .catch(err => {
+    console.log(err)
+    setFormErrors(err.data || {}) })
   }
 
   /*
@@ -81,6 +83,12 @@ const UserEditContent = ({isFetching, groups, usersByID, add, update}) => {
       validateStatus: 'error',
       help: formErrors[name],
     }
+
+  const errors = []
+    .concat(formErrors?.non_field_errors)
+    .concat(formErrors?.detail)
+    .concat(error?.message)
+    .filter(Boolean)
 
   return (
     <>
@@ -154,7 +162,7 @@ const UserEditContent = ({isFetching, groups, usersByID, add, update}) => {
           <Form.Item label="Is Superuser" {...props("is_superuser")} valuePropName="checked">
             <Checkbox />
           </Form.Item>
-          {formErrors?.non_field_errors &&
+          {errors.length > 0 &&
             <Alert
               showIcon
               type="error"
@@ -163,7 +171,7 @@ const UserEditContent = ({isFetching, groups, usersByID, add, update}) => {
               description={
                 <ul>
                   {
-                    formErrors.non_field_errors.map(e =>
+                    errors.map(e =>
                       <li key={e}>{e}</li>
                     )
                   }
@@ -203,10 +211,20 @@ function deserialize(values) {
   return newValues
 }
 
-function serialize(values) {
+function serialize(values, original) {
   const newValues = { ...values }
   if (!newValues.date_joined)
     newValues.date_joined = new Date().toISOString()
+
+  if (original) {
+    Object.keys(newValues).forEach(key => {
+      if (key === 'id')
+        return
+      if (String(newValues[key] || '') === String(original[key] || ''))
+        delete newValues[key]
+    })
+  }
+
   return newValues
 }
 
