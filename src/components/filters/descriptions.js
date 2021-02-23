@@ -1,4 +1,4 @@
-import {FILTER_TYPE, SAMPLE_KIND, SEX, TAXON} from "../../constants";
+import {FILTER_TYPE, SEX, TAXON} from "../../constants";
 
 export const SAMPLE_FILTERS = {
   sample_kind__name: {

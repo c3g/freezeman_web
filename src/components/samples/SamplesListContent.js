@@ -31,9 +31,9 @@ const getTableColumns = (containersByID, individualsByID, sampleKinds) => [
       dataIndex: "sample_kind__name",
       sorter: true,
       width: 80,
-      options: sampleKinds.map(x => ({ label: x.name, value: x.name })), // for getFilterProps
+      options: sampleKinds.items.map(x => ({ label: x.name, value: x.name })), // for getFilterProps
       render: (_, sample) =>
-        <Tag>{sampleKinds.find(sk => sk.id === sample.sample_kind).name}</Tag>,
+        <Tag>{sampleKinds.itemsByID[sample.sample_kind].name}</Tag>,
     },
     {
       title: "Name",
@@ -112,7 +112,7 @@ const mapStateToProps = state => ({
   token: state.auth.tokens.access,
   samplesByID: state.samples.itemsByID,
   samples: state.samples.items,
-  sampleKinds: state.sampleKinds.items,
+  sampleKinds: state.sampleKinds,
   actions: state.sampleTemplateActions,
   page: state.samples.page,
   totalCount: state.samples.totalCount,
