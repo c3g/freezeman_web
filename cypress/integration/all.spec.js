@@ -7,6 +7,7 @@
 //  - Container_rename_v0.1.xlsx
 //  - Extraction_v0.8.xlsx
 //  - Sample_submission_v0.11.xlsx
+//  - Sample_submission_v0.9.1_AB.xlsx
 //  - Sample_update_v0.5.xlsx
 
 context('All tests', () => {
@@ -43,16 +44,16 @@ context('All tests', () => {
     cy.get('body').should('contain', '1-10 of 14 items')
   })
 
-  //it('creates samples', () => {
-  //  getCredentials().then(login)
-  //  cy.get('li').contains('Samples & Extractions').click()
-  //  cy.get('button').contains('Add Samples').click()
-  //  cy.get('input[type=file]').attachFile('Sample_submission_v0.11.xlsx')
-  //  cy.get('button').contains('Submit').click()
-  //  cy.get('.ant-alert-success').should('contain', 'Template submitted')
-  //  cy.get('button').contains('Go Back').click()
-  //  cy.get('body').should('contain', 'FIXME')
-  //})
+  it('creates samples', () => {
+    getCredentials().then(login)
+    cy.get('li').contains('Samples & Extractions').click()
+    cy.get('button').contains('Add Samples').click()
+    cy.get('input[type=file]').attachFile('Sample_submission_v0.9.1_AB.xlsx')
+    cy.get('button').contains('Submit').click()
+    cy.get('.ant-alert-success').should('contain', 'Template submitted')
+    cy.get('button').contains('Go Back').click()
+    cy.get('body').should('contain', '1-8 of 8 items')
+  })
 
 
   // Examples
