@@ -4,11 +4,8 @@ import mergeArray from "../../utils/mergeArray";
 
 import shouldIgnoreError from "../../utils/shouldIgnoreError";
 import preprocessVersions from "../../utils/preprocessVersions";
+import {resetTable} from "../../utils/reducers";
 import USERS from "./actions";
-
-function resetTable(state) {
-  return { ...state, items: [], page: { limit: 0, offset: 0 } }
-}
 
 export const users = (
   state = {
