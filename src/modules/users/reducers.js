@@ -6,6 +6,10 @@ import shouldIgnoreError from "../../utils/shouldIgnoreError";
 import preprocessVersions from "../../utils/preprocessVersions";
 import USERS from "./actions";
 
+function resetTable(state) {
+  return { ...state, items: [], page: { limit: 0, offset: 0 } }
+}
+
 export const users = (
   state = {
     itemsByID: {},
@@ -52,7 +56,7 @@ export const users = (
     case USERS.ADD.REQUEST:
         return { ...state, error: undefined, isFetching: true };
     case USERS.ADD.RECEIVE:
-        return merge({ ...state, error: undefined, isFetching: false, },
+        return merge(resetTable({ ...state, error: undefined, isFetching: false, }),
           ['itemsByID', action.data.id],
           preprocess(action.data));
     case USERS.ADD.ERROR:
