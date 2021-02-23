@@ -43,7 +43,6 @@ import {
   CloseOutlined
 } from "@ant-design/icons";
 
-import {withUser} from "../../utils/withItem";
 import dateToString from "../../utils/dateToString";
 import weakMapMemoize from "../../utils/weak-map-memoize";
 import itemRender from "../../utils/breadcrumbItemRender";
@@ -51,7 +50,7 @@ import AppPageHeader from "../AppPageHeader";
 import PageContent from "../PageContent";
 import ErrorMessage from "../ErrorMessage";
 import EditButton from "../EditButton";
-import {listVersions} from "../../modules/users/actions";
+import {listVersions, get} from "../../modules/users/actions";
 import routes from "./routes";
 import canWrite from "./canWrite";
 
@@ -89,9 +88,9 @@ const mapStateToProps = state => ({
   groupsByID: state.groups.itemsByID,
 });
 
-const mapDispatchToProps = {listVersions};
+const mapDispatchToProps = {get, listVersions};
 
-const ReportsUserContent = ({canWrite, isFetching, usersError, usersByID, groupsByID, listVersions}) => {
+const ReportsUserContent = ({canWrite, isFetching, usersError, usersByID, groupsByID, get, listVersions}) => {
   const history = useHistory();
   const {id} = useParams();
   const [expandedGroups, setExpandedGroups] = useState({});
@@ -99,7 +98,7 @@ const ReportsUserContent = ({canWrite, isFetching, usersError, usersByID, groups
   const user = usersByID[id];
 
   if (!isFetching && !user) {
-    withUser(usersByID, id, () => null, null)
+    get(id)
   }
 
   if (user && !user.versions && !user.isFetching) {
