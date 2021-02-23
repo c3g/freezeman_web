@@ -20,6 +20,8 @@ import {
 } from "./modules/samples/reducers";
 import {users} from "./modules/users/reducers";
 import {versions} from "./modules/versions/reducers";
+import {reducer as groups} from "./modules/groups";
+import shouldIgnoreError from "./utils/shouldIgnoreError";
 
 const AUTH_PERSIST_CONFIG = {
   key: "auth",
@@ -39,6 +41,7 @@ const allReducers = combineReducers({
   sampleTemplateActions,
   samples,
   users,
+  groups,
   versions,
 });
 
@@ -51,18 +54,7 @@ function showError(action) {
   if (!action.error)
     return
 
-  const ignoreError = action?.meta?.ignoreError
-
-  if (ignoreError === true)
-    return
-
-  if (typeof ignoreError === 'string' && ignoreError === action.error.name)
-    return
-
-  if (Array.isArray(ignoreError) && ignoreError.some(e => e === action.error.name))
-    return
-
-  if (typeof ignoreError === 'function' && ignoreError(action.error, action))
+  if (shouldIgnoreError(action))
     return
 
   notification.error({
