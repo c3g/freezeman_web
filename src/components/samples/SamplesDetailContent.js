@@ -50,6 +50,7 @@ const depletedStyle = {
 
 const mapStateToProps = state => ({
   samplesByID: state.samples.itemsByID,
+  sampleKindsByID: state.sampleKinds.itemsByID,
   containersByID: state.containers.itemsByID,
   individualsByID: state.individuals.itemsByID,
   usersByID: state.users.itemsByID,
@@ -57,7 +58,7 @@ const mapStateToProps = state => ({
 
 const actionCreators = {getSample, listVersions};
 
-const SamplesDetailContent = ({samplesByID, containersByID, individualsByID, usersByID, getSample, listVersions}) => {
+const SamplesDetailContent = ({samplesByID, sampleKindsByID, containersByID, individualsByID, usersByID, getSample, listVersions}) => {
   const history = useHistory();
   const {id} = useParams();
 
@@ -108,7 +109,7 @@ const SamplesDetailContent = ({samplesByID, containersByID, individualsByID, use
       <Descriptions bordered={true} size="small">
           <Descriptions.Item label="Name">{sample.name}</Descriptions.Item>
           <Descriptions.Item label="Alias">{sample.alias}</Descriptions.Item>
-          <Descriptions.Item label="Sample Kind">{sample.sample_kind}</Descriptions.Item>
+          <Descriptions.Item label="Sample Kind">{sampleKindsByID[sample.sample_kind]?.name}</Descriptions.Item>
           <Descriptions.Item label="Volume">{volume} µL</Descriptions.Item>
           <Descriptions.Item label="Concentration">
               {sample.concentration == null

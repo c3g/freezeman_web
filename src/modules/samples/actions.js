@@ -94,7 +94,7 @@ export const clearFilters = thenList(() => {
 });
 
 export const listKinds = () => async (dispatch, getState) => {
-    // Check if we're already fetching or have fetched container kinds first (they won't change dynamically.)
+    // Check if we're already fetching or have fetched sample kinds first
     if (getState().sampleKinds.isFetching || getState().sampleKinds.items.length > 0)
         return;
 
