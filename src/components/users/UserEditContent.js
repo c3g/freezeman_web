@@ -148,7 +148,6 @@ const UserEditContent = ({isFetching, groups, usersByID, error, add, update}) =>
           <Form.Item label="Last Name" {...props("last_name")} rules={requiredRules}>
             <Input />
           </Form.Item>
-          {/* Groups: to be done */}
           <Form.Item label="Groups" {...props("groups")}>
             <Select
               mode="multiple"
