@@ -40,8 +40,9 @@ export const update = (id, user) => async (dispatch, getState) => {
         UPDATE, api.users.update(user), { meta: { id, ignoreError: 'APIError' }}));
 };
 
-export const updateSelf = (id, user) => async (dispatch, getState) => {
-    if (getState().users.itemsByID[id].isFetching)
+export const updateSelf = (user) => async (dispatch, getState) => {
+    const id = getState().auth.currentUserID
+    if (!id || getState().users.itemsByID[id].isFetching)
         return;
 
     return await dispatch(networkAction(
