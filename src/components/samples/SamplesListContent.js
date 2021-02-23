@@ -25,14 +25,15 @@ import FiltersWarning from "../filters/FiltersWarning";
 import SamplesFilters from "./SamplesFilters";
 import mergedListQueryParams from "../../utils/mergedListQueryParams";
 
-const getTableColumns = (containersByID, individualsByID, sampleKindsByID) => [
+const getTableColumns = (containersByID, individualsByID, sampleKinds) => [
     {
       title: "Sample Kind",
       dataIndex: "sample_kind__name",
       sorter: true,
       width: 80,
+      options: sampleKinds.map(x => ({ label: x.name, value: x.name })), // for getFilterProps
       render: (_, sample) =>
-        <Tag>{sampleKindsByID[sample.sample_kind].name}</Tag>,
+        <Tag>{sampleKinds.find(sk => sk.id === sample.sample_kind).name}</Tag>,
     },
     {
       title: "Name",
@@ -111,7 +112,7 @@ const mapStateToProps = state => ({
   token: state.auth.tokens.access,
   samplesByID: state.samples.itemsByID,
   samples: state.samples.items,
-  sampleKindsByID: state.sampleKinds.itemsByID,
+  sampleKinds: state.sampleKinds.items,
   actions: state.sampleTemplateActions,
   page: state.samples.page,
   totalCount: state.samples.totalCount,
@@ -128,7 +129,7 @@ const SamplesListContent = ({
   token,
   samples,
   samplesByID,
-  sampleKindsByID,
+  sampleKinds,
   actions,
   isFetching,
   page,
@@ -149,7 +150,7 @@ const SamplesListContent = ({
     (mergedListQueryParams(SAMPLE_FILTERS, filters, sortBy))
       .then(response => response.data)
 
-  const columns = getTableColumns(containersByID, individualsByID, sampleKindsByID)
+  const columns = getTableColumns(containersByID, individualsByID, sampleKinds)
   .map(c => Object.assign(c, getFilterProps(
     c,
     SAMPLE_FILTERS,

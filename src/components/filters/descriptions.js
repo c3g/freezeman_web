@@ -6,8 +6,7 @@ export const SAMPLE_FILTERS = {
     key: "sample_kind__name",
     label: "Type",
     mode: "multiple",
-    placeholder: "All",
-    options: SAMPLE_KIND.map(x => ({ label: x, value: x })),
+    placeholder: "All"
   },
   name: {
     type: FILTER_TYPE.INPUT,
