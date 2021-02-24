@@ -31,9 +31,11 @@ let lastItems = loadLastItems()
 
 const mapStateToProps = state => ({
   token: state.auth.tokens.access,
+  sampleKindsByID: state.sampleKinds.itemsByID
 });
 
-const JumpBar = ({token}) => {
+const JumpBar = (props) => {
+  const {token} = props
   const [value, setValue] = useState('');
   const [error, setError] = useState(undefined);
   const [isFetching, setIsFetching] = useState(false);
@@ -87,7 +89,7 @@ const JumpBar = ({token}) => {
       onChange={onChange}
       onSearch={onSearch}
     >
-      {(value === '' ? lastItems : items).map(renderItem)}
+      {(value === '' ? lastItems : items).map(item => renderItem(item, props))}
     </Select>
     {error &&
       <Text type="danger">
@@ -107,10 +109,10 @@ function getPath(type, id) {
   throw new Error('unreachable')
 }
 
-function renderItem(r) {
+function renderItem(r, props) {
   switch (r.type) {
     case 'container': return renderContainer(r.item)
-    case 'sample': return renderSample(r.item)
+    case 'sample': return renderSample(r.item, props.sampleKindsByID)
     case 'individual': return renderIndividual(r.item)
     case 'user': return renderUser(r.item)
   }
@@ -130,14 +132,16 @@ function renderContainer(container) {
   );
 }
 
-function renderSample(sample) {
+function renderSample(sample, sampleKindsByID) {
+  const sampleKind = sampleKindsByID?.[sample.sample_kind]?.name
+
   return (
     <Option key={'sample_' + sample.id}>
       <ExperimentOutlined />{' '}
       <strong>{sample.name}</strong>{' '}
-      {sample.biospecimen_type &&
+      {sampleKind &&
         <>
-          <Tag style={tagStyle}>{sample.biospecimen_type}</Tag>{' '}
+          <Tag style={tagStyle}>{sampleKind}</Tag>{' '}
         </>
       }
       <Text type="secondary">sample</Text>{' '}
