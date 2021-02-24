@@ -36,13 +36,14 @@ const mapStateToProps = state => ({
 
 const JumpBar = (props) => {
   const {token} = props
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState(null);
   const [error, setError] = useState(undefined);
   const [isFetching, setIsFetching] = useState(false);
-  const [items, setItems] = useState([]);
+  const [items, setItems] = useState(lastItems);
   const history = useHistory();
 
   const search = useMemo(() => debounce(150, query => {
+    setValue(null)
     setIsFetching(true)
     withToken(token, api.query.search)(query)
       .then(response => { setItems(response.data) })
@@ -63,14 +64,14 @@ const JumpBar = (props) => {
     const id = parts.join('_')
     const path = getPath(type, id)
     const item = items.find(i => i.type === type && String(i.item.id) === String(id))
-    setValue('')
+    setValue(null)
     pushItem(item)
+    setItems(lastItems)
     history.push(path)
   }
 
   const onSearch = value => {
     setValue(value)
-
     if (value)
       search(value);
     else
@@ -86,6 +87,7 @@ const JumpBar = (props) => {
       size="large"
       style={style}
       loading={isFetching}
+      value={value}
       onChange={onChange}
       onSearch={onSearch}
     >
@@ -186,9 +188,14 @@ function loadLastItems() {
 function pushItem(item) {
   if (!item)
     return
+  lastItems = lastItems.filter(i => !itemEquals(item, i))
   lastItems.unshift(item)
   lastItems = lastItems.slice(0, 10)
   localStorage['JumpBar__lastItems'] = JSON.stringify(lastItems)
+}
+
+function itemEquals(a, b) {
+  return a.type === b.type && a.item.id === b.item.id
 }
 
 export default connect(mapStateToProps)(JumpBar);
