@@ -10,7 +10,7 @@ import {
 } from "@ant-design/icons";
 import {Select, Tag, Typography} from "antd";
 
-import {clear, search} from "../modules/query/actions";
+import api, {withToken} from "../utils/api";
 
 const {Text} = Typography;
 const {Option} = Select;
@@ -30,17 +30,29 @@ let lastItems = loadLastItems()
 
 
 const mapStateToProps = state => ({
-  isFetching: state.query.isFetching,
-  items: state.query.items,
+  token: state.auth.tokens.access,
 });
 
-const mapDispatchToProps = dispatch =>
-  bindActionCreators({clear, search}, dispatch);
-
-
-const JumpBar = ({items, isFetching, clear, search}) => {
+const JumpBar = ({token}) => {
   const [value, setValue] = useState('');
+  const [error, setError] = useState(undefined);
+  const [isFetching, setIsFetching] = useState(false);
+  const [items, setItems] = useState([]);
   const history = useHistory();
+
+  const search = query => {
+    setIsFetching(true)
+    withToken(token, api.query.search)(query)
+      .then(response => { setItems(response.data) })
+      .catch(err => {
+        if (err.name === 'AbortError')
+          return
+        setError(err.message)
+      })
+      .then(() => setIsFetching(false))
+  }
+
+  const clear = () => setItems([])
 
   const onChange = value => {
     if (!value)
@@ -77,6 +89,11 @@ const JumpBar = ({items, isFetching, clear, search}) => {
     >
       {(value === '' ? lastItems : items).map(renderItem)}
     </Select>
+    {error &&
+      <Text type="danger">
+        {error}
+      </Text>
+    }
   </>;
 };
 
@@ -170,4 +187,4 @@ function pushItem(item) {
   localStorage['JumpBar__lastItems'] = JSON.stringify(lastItems)
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(JumpBar);
+export default connect(mapStateToProps)(JumpBar);
