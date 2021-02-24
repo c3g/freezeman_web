@@ -1,5 +1,4 @@
-import React, {useState} from "react";
-import {bindActionCreators} from "redux";
+import React, {useMemo, useState} from "react";
 import {connect} from "react-redux";
 import {useHistory} from "react-router-dom";
 import {
@@ -10,6 +9,7 @@ import {
 } from "@ant-design/icons";
 import {Select, Tag, Typography} from "antd";
 
+import debounce from "../utils/debounce";
 import api, {withToken} from "../utils/api";
 
 const {Text} = Typography;
@@ -40,7 +40,7 @@ const JumpBar = ({token}) => {
   const [items, setItems] = useState([]);
   const history = useHistory();
 
-  const search = query => {
+  const search = useMemo(() => debounce(150, query => {
     setIsFetching(true)
     withToken(token, api.query.search)(query)
       .then(response => { setItems(response.data) })
@@ -50,7 +50,7 @@ const JumpBar = ({token}) => {
         setError(err.message)
       })
       .then(() => setIsFetching(false))
-  }
+  }), [token])
 
   const clear = () => setItems([])
 
@@ -102,7 +102,7 @@ function getPath(type, id) {
     case 'container':  return `/containers/${id}`;
     case 'sample':     return `/samples/${id}`;
     case 'individual': return `/individuals/${id}`;
-    case 'user':       return `/reports/user/${id}`;
+    case 'user':       return `/users/${id}`;
   }
   throw new Error('unreachable')
 }
