@@ -17,7 +17,7 @@ const {Option} = Select;
 
 const style = {
   alignSelf: 'center',
-  minWidth: '280px',
+  width: '100%',
 }
 
 const tagStyle = {
@@ -71,7 +71,7 @@ const JumpBar = (props) => {
       showArrow
       filterOption={false}
       placeholder="Jump to..."
-      size="large"
+      size="medium"
       style={style}
       loading={isFetching}
       onChange={onChange}
