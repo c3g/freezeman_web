@@ -77,7 +77,7 @@ const titleStyle = {
   fontWeight: 900,
   fontSize: "18px",
   lineHeight: "unset",
-  padding: '1em 24px 0',
+  padding: "1em 24px 0",
   margin: 0,
 };
 

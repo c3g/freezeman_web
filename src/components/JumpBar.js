@@ -16,13 +16,13 @@ const {Text} = Typography;
 const {Option} = Select;
 
 const style = {
-  alignSelf: 'center',
-  width: '100%',
+  alignSelf: "center",
+  width: "100%",
 }
 
 const tagStyle = {
-  margin: '0 2px',
-  height: '20px',
+  margin: "0 2px",
+  height: "20px",
 }
 
 
