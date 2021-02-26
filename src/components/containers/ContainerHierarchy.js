@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from "react";
-import {useHistory} from "react-router-dom";
+import {Link, useHistory} from "react-router-dom";
 import {connect} from "react-redux";
 import {set} from "object-path-immutable";
-
 import {Tree, Typography} from "antd";
-import "antd/es/tree/style/css";
-import "antd/es/typography/style/css";
 
 import {
   LoadingOutlined,
@@ -120,12 +117,13 @@ const buildContainerTreeFromPath = (context, path) => {
         const sample = context.samplesByID[sampleId];
         if (!sample)
           return loadingEntry(sampleId);
+        const sampleKind = context.sampleKinds.itemsByID[sample.sample_kind]?.name
         return {
           title: <span style={entryStyle}>
-            <strong>{sample.name}</strong>{' '}
-            <Text type="secondary">
-              sample ({sample.biospecimen_type})
-            </Text>
+            <Link to={`/samples/${sample.id}`}>
+              <strong>{sample.name}</strong>{' '}
+              sample ({sampleKind})
+            </Link>
           </span>,
           icon: <CheckOutlined />,
           key: sampleId,
@@ -146,11 +144,12 @@ const buildContainerTreeFromPath = (context, path) => {
 const mapStateToProps = state => ({
   containersByID: state.containers.itemsByID,
   samplesByID: state.samples.itemsByID,
+  sampleKinds: state.sampleKinds,
 });
 
 const actionCreators = {get, listChildren, listSamples};
 
-const ContainerHierarchy = ({container, containersByID, samplesByID, listChildren, listSamples}) => {
+const ContainerHierarchy = ({container, containersByID, samplesByID, sampleKinds, listChildren, listSamples}) => {
   if (!container || !container.parents)
     return <LoadingOutlined />;
 
@@ -162,6 +161,7 @@ const ContainerHierarchy = ({container, containersByID, samplesByID, listChildre
   const context = {
     containersByID,
     samplesByID,
+    sampleKinds,
     explodedKeys,
   }
   const path = container.parents.concat([container.id]);

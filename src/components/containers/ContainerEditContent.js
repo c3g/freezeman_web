@@ -1,15 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {connect} from "react-redux";
 import {useHistory, useParams} from "react-router-dom";
-
-import {Alert, AutoComplete, Button, Form, Input, Select, Typography} from "antd";
-import "antd/es/alert/style/css";
-import "antd/es/auto-complete/style/css";
-import "antd/es/button/style/css";
-import "antd/es/form/style/css";
-import "antd/es/input/style/css";
-import "antd/es/select/style/css";
-import "antd/es/typography/style/css";
+import {Alert, Button, Form, Input, Select} from "antd";
 const {Option} = Select;
 const {Item} = Form;
 const {TextArea} = Input;
@@ -164,21 +156,21 @@ const ContainerEditContent = ({token, containerKinds, containersByID, add, updat
             <TextArea />
           </Item>
           {formErrors?.non_field_errors &&
-            <>
-              <Alert
-                showIcon
-                type="error"
-                message="Error(s)"
-                description={
-                  <ul>
-                    {formErrors.non_field_errors.map((e, i) =>
-                      <li key={i}>{e}</li>
-                    )}
-                  </ul>
-                }
-              />
-              <br/>
-            </>
+            <Alert
+              showIcon
+              type="error"
+              style={{ marginBottom: '1em' }}
+              message="Validation error(s)"
+              description={
+                <ul>
+                  {
+                    formErrors.non_field_errors.map(e =>
+                      <li key={e}>{e}</li>
+                    )
+                  }
+                </ul>
+              }
+            />
           }
           <Item>
             <Button type="primary" htmlType="submit">

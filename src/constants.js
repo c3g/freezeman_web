@@ -8,23 +8,17 @@ export const FILTER_TYPE = {
   INPUT: "INPUT",
 }
 
-export const BIOSPECIMEN_TYPE = [
-  "DNA",
-  "RNA",
-  "BLOOD",
-  "SALIVA",
-  "SWAB",
-]
-
 export const TISSUE_SOURCE = [
   "Blood",
+  "Cells",
+  "Expectoration",
+  "Gargle",
+  "Plasma",
   "Saliva",
   "Swab",
   "Tumor",
-  "Plasma",
   "Buffy coat",
   "Tail",
-  "Cells",
 ]
 
 export const SEX = [

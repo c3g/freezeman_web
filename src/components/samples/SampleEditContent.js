@@ -2,7 +2,6 @@ import React, {useEffect, useState} from "react";
 import moment from "moment";
 import {connect} from "react-redux";
 import {useHistory, useParams} from "react-router-dom";
-
 import {
   Alert,
   AutoComplete,
@@ -13,18 +12,7 @@ import {
   InputNumber,
   Select,
   Switch,
-  Typography,
 } from "antd";
-import "antd/es/alert/style/css";
-import "antd/es/auto-complete/style/css";
-import "antd/es/button/style/css";
-import "antd/es/date-picker/style/css";
-import "antd/es/form/style/css";
-import "antd/es/input/style/css";
-import "antd/es/input-number/style/css";
-import "antd/es/select/style/css";
-import "antd/es/switch/style/css";
-import "antd/es/typography/style/css";
 const {Option} = Select
 const {TextArea} = Input
 
@@ -33,7 +21,7 @@ import PageContent from "../PageContent";
 import * as Options from "../../utils/options";
 import {add, update} from "../../modules/samples/actions";
 import {sample as EMPTY_SAMPLE} from "../../models";
-import {BIOSPECIMEN_TYPE, TISSUE_SOURCE} from "../../constants";
+import {TISSUE_SOURCE} from "../../constants";
 import api, {withToken} from "../../utils/api";
 
 const requiredRules = [{ required: true, message: 'Missing field' }]
@@ -68,11 +56,12 @@ const listCollectionSites = (token) => {
 const mapStateToProps = state => ({
   token: state.auth.tokens.access,
   samplesByID: state.samples.itemsByID,
+  sampleKinds: state.sampleKinds,
 });
 
 const actionCreators = {add, update};
 
-const SampleEditContent = ({token, samplesByID, add, update}) => {
+const SampleEditContent = ({token, samplesByID, sampleKinds, add, update}) => {
   const history = useHistory();
   const {id} = useParams();
   const isAdding = id === undefined
@@ -180,7 +169,9 @@ const SampleEditContent = ({token, samplesByID, add, update}) => {
       help: formErrors[name],
     }
 
-  const isTissueEnabled = tissueEnabled(formData?.biospecimen_type)
+  const sampleKindName = (sampleKindID) => sampleKinds.itemsByID[sampleKindID]?.name
+
+  const isTissueEnabled = tissueEnabled(sampleKindName(formData?.sample_kind))
 
   return (
     <>
@@ -204,10 +195,10 @@ const SampleEditContent = ({token, samplesByID, add, update}) => {
           <Form.Item label="Alias" {...props("alias")}>
             <Input />
           </Form.Item>
-          <Form.Item label="Biosp. Type" {...props("biospecimen_type")} rules={requiredRules}>
+          <Form.Item label="Sample Kind" {...props("sample_kind")} rules={requiredRules}>
             <Select>
-              {BIOSPECIMEN_TYPE.map(type =>
-                <Option key={type} value={type}>{type}</Option>
+              {sampleKinds.items.map(sk =>
+                <Option key={sk.name} value={sk.id}>{sk.name}</Option>
               )}
             </Select>
           </Form.Item>
@@ -270,7 +261,7 @@ const SampleEditContent = ({token, samplesByID, add, update}) => {
               onFocus={onFocusSite}
             />
           </Form.Item>
-          <Form.Item label="Reception" {...props("reception_date")} rules={requiredRules}>
+          <Form.Item label="Reception/Extraction" {...props("creation_date")} rules={requiredRules}>
             <DatePicker />
           </Form.Item>
           <Form.Item label="Phenotype" {...props("phenotype")}>
@@ -302,23 +293,22 @@ const SampleEditContent = ({token, samplesByID, add, update}) => {
               step={0.001}
             />
           </Form.Item>
-
           {formErrors?.non_field_errors &&
-            <>
-              <Alert
-                showIcon
-                type="error"
-                message="Error(s)"
-                description={
-                  <ul>
-                    {formErrors.non_field_errors.map((e, i) =>
-                      <li key={i}>{e}</li>
-                    )}
-                  </ul>
-                }
-              />
-              <br/>
-            </>
+            <Alert
+              showIcon
+              type="error"
+              style={{ marginBottom: '1em' }}
+              message="Validation error(s)"
+              description={
+                <ul>
+                  {
+                    formErrors.non_field_errors.map(e =>
+                      <li key={e}>{e}</li>
+                    )
+                  }
+                </ul>
+              }
+            />
           }
           <Form.Item>
             <Button type="primary" htmlType="submit">
@@ -342,16 +332,16 @@ function deserialize(values) {
 
   if (newValues.experimental_group === null)
     newValues.experimental_group = []
-  if (newValues.reception_date)
-    newValues.reception_date = moment(newValues.reception_date, 'YYYY-MM-DD')
+  if (newValues.creation_date)
+    newValues.creation_date = moment(newValues.creation_date, 'YYYY-MM-DD')
   return newValues
 }
 
 function serialize(values) {
   const newValues = {...values}
 
-  if (newValues.reception_date)
-    newValues.reception_date = newValues.reception_date.format('YYYY-MM-DD')
+  if (newValues.creation_date)
+    newValues.creation_date = newValues.creation_date.format('YYYY-MM-DD')
 
   /* tissue_source bottom value is '' for legacy reasons */
   if (!newValues.tissue_source)

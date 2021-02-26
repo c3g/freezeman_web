@@ -1,9 +1,7 @@
 import React from "react";
 import {connect} from "react-redux";
 import {Link} from "react-router-dom";
-
 import {Button} from "antd";
-import "antd/es/button/style/css";
 
 import AppPageHeader from "../AppPageHeader";
 import PageContent from "../PageContent";
@@ -12,11 +10,12 @@ import ExportButton from "../ExportButton";
 import AddButton from "../AddButton";
 
 import api, {withToken}  from "../../utils/api"
-import {list, setFilter, clearFilters, setSortBy} from "../../modules/individuals/actions";
+import {listTable, setFilter, setFilterOption, clearFilters, setSortBy} from "../../modules/individuals/actions";
 import {INDIVIDUAL_FILTERS} from "../filters/descriptions";
 import getFilterProps from "../filters/getFilterProps";
+import getNFilters from "../filters/getNFilters";
 import FiltersWarning from "../filters/FiltersWarning";
-import serializeFilterParams from "../../utils/serializeFilterParams";
+import mergedListQueryParams from "../../utils/mergedListQueryParams";
 
 
 const TABLE_COLUMNS = [
@@ -62,7 +61,7 @@ const mapStateToProps = state => ({
   sortBy: state.individuals.sortBy,
 });
 
-const mapDispatchToProps = {list, setFilter, clearFilters, setSortBy};
+const mapDispatchToProps = {listTable, setFilter, setFilterOption, clearFilters, setSortBy};
 
 const IndividualsListContent = ({
   token,
@@ -73,14 +72,15 @@ const IndividualsListContent = ({
   totalCount,
   filters,
   sortBy,
-  list,
+  listTable,
   setFilter,
+  setFilterOption,
   clearFilters,
   setSortBy,
 }) => {
   const listExport = () =>
     withToken(token, api.individuals.listExport)
-    (serializeFilterParams(filters, INDIVIDUAL_FILTERS))
+    (mergedListQueryParams(INDIVIDUAL_FILTERS, filters, sortBy))
       .then(response => response.data)
 
   const columns = TABLE_COLUMNS.map(c => Object.assign(c, getFilterProps(
@@ -88,9 +88,10 @@ const IndividualsListContent = ({
     INDIVIDUAL_FILTERS,
     filters,
     setFilter,
+    setFilterOption
   )))
 
-  const nFilters = Object.entries(filters).filter(e => e[1]).length
+  const nFilters = getNFilters(filters)
 
   return <>
     <AppPageHeader title="Individuals" extra={[
@@ -100,7 +101,11 @@ const IndividualsListContent = ({
     <PageContent>
       <div style={{ display: 'flex', textAlign: 'right', marginBottom: '1em' }}>
         <div style={{ flex: 1 }} />
-        <FiltersWarning value={nFilters} />
+        <FiltersWarning
+          nFilters={nFilters}
+          filters={filters}
+          description={INDIVIDUAL_FILTERS}
+        />
         <Button
           style={{ margin: 6 }}
           disabled={nFilters === 0}
@@ -119,7 +124,7 @@ const IndividualsListContent = ({
         page={page}
         filters={filters}
         sortBy={sortBy}
-        onLoad={list}
+        onLoad={listTable}
         onChangeSort={setSortBy}
       />
     </PageContent>

@@ -7,15 +7,16 @@ import {Button, Tag} from "antd";
 import AppPageHeader from "../AppPageHeader";
 import PageContent from "../PageContent";
 import PaginatedTable from "../PaginatedTable";
+import AddButton from "../AddButton";
 
-
-import {list, setFilter, clearFilters, setSortBy} from "../../modules/users/actions";
+import {listTable, setFilter, setFilterOption, clearFilters, setSortBy} from "../../modules/users/actions";
 
 import {USER_FILTERS} from "../filters/descriptions";
 import getFilterProps from "../filters/getFilterProps";
 import FiltersWarning from "../filters/FiltersWarning";
+import canWrite from "./canWrite";
 
-const getTableColumns = () => [
+const getTableColumns = (groupsByID) => [
     {
       title: "Username",
       dataIndex: "username",
@@ -30,7 +31,7 @@ const getTableColumns = () => [
     {
       title: "Groups",
       dataIndex: "groups",
-      render: (groups = []) => groups.map(g => <Tag key={g.name}>{g.name}</Tag>)
+      render: (groups = []) => groups.map(g => <Tag key={g}>{groupsByID[g]?.name}</Tag>)
     },
     {
       title: "Date Joined",
@@ -54,8 +55,10 @@ const getTableColumns = () => [
 
 
 const mapStateToProps = state => ({
-  usersByID: state.users.itemsByID,
+  canWrite: canWrite(state),
   users: state.users.items,
+  usersByID: state.users.itemsByID,
+  groupsByID: state.groups.itemsByID,
   sortBy: state.users.sortBy,
   filters: state.users.filters,
   actions: state.userTemplateActions,
@@ -64,37 +67,47 @@ const mapStateToProps = state => ({
   isFetching: state.users.isFetching,
 });
 
-const actionCreators = {list, setFilter, clearFilters, setSortBy};
+const actionCreators = {listTable, setFilter, setFilterOption, clearFilters, setSortBy};
 
 const UsersListContent = ({
+  canWrite,
   users,
   usersByID,
+  groupsByID,
   sortBy,
   filters,
   isFetching,
   page,
   totalCount,
-  list,
+  listTable,
   setFilter,
+  setFilterOption,
   clearFilters,
   setSortBy,
 }) => {
 
-  const columns = getTableColumns(usersByID)
+  const columns = getTableColumns(groupsByID)
     .map(c => Object.assign(c, getFilterProps(
       c,
       USER_FILTERS,
       filters,
       setFilter,
+      setFilterOption
     )))
 
   const nFilters = Object.entries(filters).filter(e => e[1]).length
 
   return <>
-    <AppPageHeader title="Users" />
+    <AppPageHeader title="Users" extra={canWrite ? [
+      <AddButton key='add' url="/users/add" />,
+    ] : []}/>
     <PageContent>
       <div style={{ textAlign: 'right', marginBottom: '1em' }}>
-        <FiltersWarning value={nFilters} />
+        <FiltersWarning
+          nFilters={nFilters}
+          filters={filters}
+          description={USER_FILTERS}
+        />
         <Button
           disabled={nFilters === 0}
           onClick={clearFilters}
@@ -111,7 +124,7 @@ const UsersListContent = ({
         page={page}
         filters={filters}
         sortBy={sortBy}
-        onLoad={list}
+        onLoad={listTable}
         onChangeSort={setSortBy}
       />
     </PageContent>

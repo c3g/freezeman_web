@@ -1,10 +1,7 @@
 import React, {useRef} from "react";
 import {connect} from "react-redux";
 import {Link} from "react-router-dom";
-
 import {Button, Tag} from "antd";
-import "antd/es/button/style/css";
-import "antd/es/tag/style/css";
 
 import AppPageHeader from "../AppPageHeader";
 import PageContent from "../PageContent";
@@ -15,22 +12,25 @@ import ExportButton from "../ExportButton";
 
 import api, {withToken}  from "../../utils/api"
 
-import {list, setFilter, clearFilters, setSortBy} from "../../modules/samples/actions";
+import {listTable, setFilter, setFilterOption, clearFilters, setSortBy} from "../../modules/samples/actions";
 import {actionsToButtonList} from "../../utils/templateActions";
 import {withContainer, withIndividual} from "../../utils/withItem";
-import serializeFilterParams from "../../utils/serializeFilterParams";
 import {SAMPLE_FILTERS} from "../filters/descriptions";
 import getFilterProps from "../filters/getFilterProps";
+import getNFilters from "../filters/getNFilters";
 import FiltersWarning from "../filters/FiltersWarning";
 import SamplesFilters from "./SamplesFilters";
+import mergedListQueryParams from "../../utils/mergedListQueryParams";
 
-const getTableColumns = (containersByID, individualsByID) => [
+const getTableColumns = (containersByID, individualsByID, sampleKinds) => [
     {
-      title: "Type",
-      dataIndex: "biospecimen_type",
+      title: "Sample Kind",
+      dataIndex: "sample_kind__name",
       sorter: true,
       width: 80,
-      render: (type) => <Tag>{type}</Tag>,
+      options: sampleKinds.items.map(x => ({ label: x.name, value: x.name })), // for getFilterProps
+      render: (_, sample) =>
+        <Tag>{sampleKinds.itemsByID[sample.sample_kind].name}</Tag>,
     },
     {
       title: "Name",
@@ -46,27 +46,32 @@ const getTableColumns = (containersByID, individualsByID) => [
     },
     {
       title: "Individual",
-      dataIndex: "individual",
+      dataIndex: "individual__name",
       sorter: true,
-      render: individual => (individual &&
+      render: (_, sample) => {
+        const individual = sample.individual
+        return (individual &&
           <Link to={`/individuals/${individual}`}>
             {withIndividual(individualsByID, individual, individual => individual.name, "loading...")}
-          </Link>),
+          </Link>)
+      }
     },
     {
       title: "Container Name",
-      dataIndexFilter: "container_name",
+      dataIndex: "container__name",
       sorter: true,
-      render: (_, sample) => (sample.container && withContainer(containersByID, sample.container, container => container.name, "loading...")),
+      render: (_, sample) =>
+        (sample.container &&
+          withContainer(containersByID, sample.container, container => container.name, "loading...")),
     },
     {
       title: "Container Barcode",
-      dataIndex: "container",
+      dataIndex: "container__barcode",
       sorter: true,
-      render: container => (container &&
-          <Link to={`/containers/${container}`}>
-            {withContainer(containersByID, container, container => container.barcode, "loading...")}
-          </Link>),
+      render: (_, sample) => (sample.container &&
+        <Link to={`/containers/${sample.container}`}>
+          {withContainer(containersByID, sample.container, container => container.barcode, "loading...")}
+        </Link>),
     },
     {
       title: "Coords",
@@ -77,7 +82,6 @@ const getTableColumns = (containersByID, individualsByID) => [
     {
       title: "Vol. (µL)",
       dataIndex: "volume_history",
-      sorter: true,
       align: "right",
       className: "table-column-numbers",
       render: vh => parseFloat(vh[vh.length - 1].volume_value).toFixed(3),
@@ -105,6 +109,7 @@ const mapStateToProps = state => ({
   token: state.auth.tokens.access,
   samplesByID: state.samples.itemsByID,
   samples: state.samples.items,
+  sampleKinds: state.sampleKinds,
   actions: state.sampleTemplateActions,
   page: state.samples.page,
   totalCount: state.samples.totalCount,
@@ -115,12 +120,13 @@ const mapStateToProps = state => ({
   sortBy: state.samples.sortBy,
 });
 
-const actionCreators = {list, setFilter, clearFilters, setSortBy};
+const actionCreators = {listTable, setFilter, setFilterOption, clearFilters, setSortBy};
 
 const SamplesListContent = ({
   token,
   samples,
   samplesByID,
+  sampleKinds,
   actions,
   isFetching,
   page,
@@ -129,24 +135,28 @@ const SamplesListContent = ({
   containersByID,
   individualsByID,
   sortBy,
-  list,
+  listTable,
   setFilter,
+  setFilterOption,
   clearFilters,
   setSortBy,
 }) => {
 
   const listExport = () =>
-    withToken(token, api.samples.listExport)({...serializeFilterParams(filters, SAMPLE_FILTERS)}).then(response => response.data)
+    withToken(token, api.samples.listExport)
+    (mergedListQueryParams(SAMPLE_FILTERS, filters, sortBy))
+      .then(response => response.data)
 
-  const columns = getTableColumns(containersByID, individualsByID)
+  const columns = getTableColumns(containersByID, individualsByID, sampleKinds)
   .map(c => Object.assign(c, getFilterProps(
     c,
     SAMPLE_FILTERS,
     filters,
     setFilter,
+    setFilterOption
   )))
 
-  const nFilters = Object.entries(filters).filter(e => e[1]).length
+  const nFilters = getNFilters(filters)
 
   return <>
     <AppPageHeader title="Samples & Extractions" extra={[
@@ -157,7 +167,11 @@ const SamplesListContent = ({
     <PageContent>
       <div style={{ display: 'flex', textAlign: 'right', marginBottom: '1em' }}>
         <SamplesFilters style={{ flex: 1 }} />
-        <FiltersWarning value={nFilters} />
+        <FiltersWarning
+          nFilters={nFilters}
+          filters={filters}
+          description={SAMPLE_FILTERS}
+        />
         <Button
           style={{ margin: 6 }}
           disabled={nFilters === 0}
@@ -176,7 +190,7 @@ const SamplesListContent = ({
         page={page}
         filters={filters}
         sortBy={sortBy}
-        onLoad={list}
+        onLoad={listTable}
         onChangeSort={setSortBy}
       />
     </PageContent>

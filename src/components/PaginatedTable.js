@@ -1,9 +1,7 @@
 import React, {useState, useRef} from "react";
 import prop from "prop-types";
-
 import {Pagination, Table} from "antd";
-import "antd/es/pagination/style/css";
-import "antd/es/table/style/css";
+
 
 const pageSize = 10;
 
@@ -72,8 +70,10 @@ function PaginatedTable ({
   };
 
   const onChangeTable = (pagination, filters, sorter) => {
-    const key = sorter.column?.dataIndex
+    const dataIndex = sorter.column?.dataIndex
+    const key = dataIndex
     const order = sorter.order
+
     if (sortBy.key !== key || sortBy.order !== order)
       onChangeSort(key, order)
   };

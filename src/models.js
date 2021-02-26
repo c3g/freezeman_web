@@ -33,14 +33,14 @@ export const container = {
 export const sample = {
   name: "",
   alias: "",
-  biospecimen_type: null,
+  sample_kind: null,
   volume_history: null, // 
   concentration: null,
   depleted: false,
   experimental_group: null, // string[]
   collection_site: "", // string(200)
   tissue_source: null, // enum
-  reception_date: null, // date
+  creation_date: null, // date
   phenotype: "", // string(200)
   comment: "", // string(200)
   update_comment: "", // string(200)
@@ -53,7 +53,7 @@ export const sample = {
 // Example:
 // {
 //     id: 9551,
-//     biospecimen_type: "DNA",
+//     sample_kind: 1,
 //     name: "0110",
 //     alias: "",
 //     volume_history: [
@@ -68,7 +68,7 @@ export const sample = {
 //     experimental_group: [],
 //     collection_site: "JGH",
 //     tissue_source: "Blood",
-//     reception_date: "2020-06-16",
+//     creation_date: "2020-06-16",
 //     phenotype: "",
 //     comment: "Extraction done using Chemagen CMG-1091",
 //     update_comment: "",
@@ -98,4 +98,30 @@ export const individual = {
 //     cohort: "INSPQ_COVID",
 //     mother: null,
 //     father: null
+// }
+//
+
+export const user = {
+  username: "",
+  first_name: null,
+  last_name: null,
+  email: null,
+  password: "",
+  groups: [],
+  // user_permissions: [], // To be implemented maybe
+  // is_active: true, // To soft-delete the user
+  is_staff: false,
+  is_superuser: false,
+  // last_login: null,
+  date_joined: null,
+}
+// Example:
+// {
+//     "id": 19,
+//     "username": "romgrk",
+//     "email": "romain.gregoire@mcgill.ca",
+//     "groups": [],
+//     "is_staff": true,
+//     "is_superuser": true,
+//     "date_joined": "2021-02-19T17:10:07.503174Z"
 // }

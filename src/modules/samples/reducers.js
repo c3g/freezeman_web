@@ -1,13 +1,47 @@
-import { merge, set } from "object-path-immutable";
+import {merge, set} from "object-path-immutable";
+import {map} from "rambda"
 
 import preprocessVersions from "../../utils/preprocessVersions";
 import {indexByID} from "../../utils/objects";
 import mergeArray from "../../utils/mergeArray";
 import {summaryReducerFactory} from "../../utils/summary";
 import {templateActionsReducerFactory} from "../../utils/templateActions";
+import {resetTable} from "../../utils/reducers";
 
 import CONTAINERS from "../containers/actions";
 import SAMPLES from "./actions";
+
+export const sampleKinds = (
+  state = {
+      items: [],
+      itemsByID: {},
+      isFetching: false,
+  },
+  action
+) => {
+    switch (action.type) {
+        case SAMPLES.LIST_KINDS.REQUEST:
+            return {
+                ...state,
+                isFetching: true,
+            };
+        case SAMPLES.LIST_KINDS.RECEIVE:
+            return {
+                ...state,
+                items: action.data,
+                itemsByID: indexByID(action.data, "id"),
+                isFetching: false,
+            };
+        case SAMPLES.LIST_KINDS.ERROR:
+            return {
+                ...state,
+                isFetching: false,
+                error: action.error,
+            };
+        default:
+            return state;
+    }
+};
 
 export const samplesSummary = summaryReducerFactory(SAMPLES);
 export const sampleTemplateActions = templateActionsReducerFactory(SAMPLES);
@@ -37,8 +71,8 @@ export const samples = (
         case SAMPLES.ADD.REQUEST:
             return { ...state, error: undefined, isFetching: true };
         case SAMPLES.ADD.RECEIVE:
-            return merge({ ...state, isFetching: false, }, ['itemsByID', action.data.id],
-                preprocessSample(action.data));
+            return merge(resetTable({ ...state, isFetching: false, }), ['itemsByID', action.data.id],
+                preprocess(action.data));
         case SAMPLES.ADD.ERROR:
             return { ...state, error: action.error, isFetching: false };
 
@@ -55,7 +89,17 @@ export const samples = (
         case SAMPLES.SET_FILTER:
             return {
                 ...state,
-                filters: set(state.filters, [action.data.name], action.data.value),
+                filters: set(state.filters, [action.data.name, 'value'], action.data.value),
+                page: set(state.page, ['offset'], 0),
+            };
+        case SAMPLES.SET_FILTER_OPTION:
+            return {
+                ...state,
+                filters: set(
+                    state.filters,
+                    [action.data.name, 'options', action.data.option],
+                    action.data.value
+                ),
                 page: set(state.page, ['offset'], 0),
             };
         case SAMPLES.CLEAR_FILTERS:
@@ -68,21 +112,40 @@ export const samples = (
         case SAMPLES.LIST.REQUEST:
             return { ...state, isFetching: true, };
         case SAMPLES.LIST.RECEIVE: {
+            /* samples[].container stored in ../containers/reducers.js */
+            const results = action.data.results.map(preprocess)
+            const itemsByID = merge(state.itemsByID, [], indexByID(results));
+            return { ...state, itemsByID, isFetching: false, error: undefined };
+        }
+        case SAMPLES.LIST.ERROR:
+            return { ...state, isFetching: false, error: action.error, };
+
+        case SAMPLES.LIST_TABLE.REQUEST:
+            return { ...state, isFetching: true, };
+        case SAMPLES.LIST_TABLE.RECEIVE: {
+            const totalCount = action.data.count;
             const hasChanged = state.totalCount !== action.data.count;
             const currentItems = hasChanged ? [] : state.items;
-            const itemsByID = merge(state.itemsByID, [], indexByID(action.data.results));
+            /* samples[].container stored in ../containers/reducers.js */
+            const results = action.data.results.map(preprocess)
+            const newItemsByID = map(
+                s => ({ ...s, container: s.container }),
+                indexByID(results)
+            );
+            const itemsByID = merge(state.itemsByID, [], newItemsByID);
             const itemsID = action.data.results.map(r => r.id)
             const items = mergeArray(currentItems, action.meta.offset, itemsID)
             return {
                 ...state,
                 itemsByID,
                 items,
-                totalCount: action.data.count,
+                totalCount,
                 page: action.meta,
                 isFetching: false,
+                error: undefined,
             };
         }
-        case SAMPLES.LIST.ERROR:
+        case SAMPLES.LIST_TABLE.ERROR:
             return { ...state, isFetching: false, error: action.error, };
 
         case SAMPLES.LIST_VERSIONS.REQUEST:
@@ -108,7 +171,7 @@ export const samples = (
             return merge(state, ['itemsByID'], itemsByID);
         }
         case CONTAINERS.LIST_SAMPLES.RECEIVE: {
-            return merge(state, ['itemsByID'], indexByID(action.data.map(preprocessSample)));
+            return merge(state, ['itemsByID'], indexByID(action.data.map(preprocess)));
         }
         case CONTAINERS.LIST_SAMPLES.ERROR: {
             const itemsByID =
@@ -122,7 +185,7 @@ export const samples = (
     }
 };
 
-function preprocessSample(sample) {
+function preprocess(sample) {
     sample.isFetching = false;
     sample.isLoaded = true;
     return sample

@@ -14,15 +14,6 @@ import {
   Timeline,
   Typography
 } from "antd";
-import "antd/es/card/style/css";
-import "antd/es/col/style/css";
-import "antd/es/descriptions/style/css";
-import "antd/es/empty/style/css";
-import "antd/es/row/style/css";
-import "antd/es/space/style/css";
-import "antd/es/tag/style/css";
-import "antd/es/timeline/style/css";
-import "antd/es/typography/style/css";
 
 import dateToString from "../../utils/dateToString";
 import useTimeline from "../../utils/useTimeline";
@@ -50,6 +41,7 @@ const depletedStyle = {
 
 const mapStateToProps = state => ({
   samplesByID: state.samples.itemsByID,
+  sampleKindsByID: state.sampleKinds.itemsByID,
   containersByID: state.containers.itemsByID,
   individualsByID: state.individuals.itemsByID,
   usersByID: state.users.itemsByID,
@@ -57,7 +49,7 @@ const mapStateToProps = state => ({
 
 const actionCreators = {getSample, listVersions};
 
-const SamplesDetailContent = ({samplesByID, containersByID, individualsByID, usersByID, getSample, listVersions}) => {
+const SamplesDetailContent = ({samplesByID, sampleKindsByID, containersByID, individualsByID, usersByID, getSample, listVersions}) => {
   const history = useHistory();
   const {id} = useParams();
 
@@ -67,6 +59,7 @@ const SamplesDetailContent = ({samplesByID, containersByID, individualsByID, use
   const error = sample.error?.name !== 'APIError' ? sample.error : undefined;
   const isLoaded = samplesByID[id] && !sample.isFetching && !sample.didFail;
   const isFetching = !samplesByID[id] || sample.isFetching;
+  const sampleKind = sampleKindsByID[sample.sample_kind]?.name
   const volume = sample.volume_history
     ? parseFloat(sample.volume_history[sample.volume_history.length - 1].volume_value).toFixed(3)
     : null;
@@ -89,7 +82,7 @@ const SamplesDetailContent = ({samplesByID, containersByID, individualsByID, use
       extra={isLoaded ?
         <Space>
           <div key="kind" style={{display: "inline-block", verticalAlign: "top", marginTop: "4px"}}>
-              <Tag>{sample.biospecimen_type}</Tag>
+              <Tag>{sampleKind}</Tag>
           </div>
           <div key="depleted" style={depletedStyle}>
               <Tag color={sample.depleted ? "red" : "green"}>{sample.depleted ? "" : "NOT "}DEPLETED</Tag>
@@ -108,7 +101,7 @@ const SamplesDetailContent = ({samplesByID, containersByID, individualsByID, use
       <Descriptions bordered={true} size="small">
           <Descriptions.Item label="Name">{sample.name}</Descriptions.Item>
           <Descriptions.Item label="Alias">{sample.alias}</Descriptions.Item>
-          <Descriptions.Item label="Biospecimen Type">{sample.biospecimen_type}</Descriptions.Item>
+          <Descriptions.Item label="Sample Kind">{sampleKind}</Descriptions.Item>
           <Descriptions.Item label="Volume">{volume} µL</Descriptions.Item>
           <Descriptions.Item label="Concentration">
               {sample.concentration == null
@@ -139,7 +132,7 @@ const SamplesDetailContent = ({samplesByID, containersByID, individualsByID, use
                   <span key={g}>{g}{i === experimentalGroups.length - 1 ? "" : ", "}</span>)}
           </Descriptions.Item>
           <Descriptions.Item label="Phenotype">{sample.phenotype}</Descriptions.Item>
-          <Descriptions.Item label="Reception Date">{sample.reception_date}</Descriptions.Item>
+          <Descriptions.Item label="Reception/Extraction Date">{sample.creation_date}</Descriptions.Item>
           <Descriptions.Item label="Container">
             {sample.container &&
               <Link to={`/containers/${sample.container}`}>
@@ -210,10 +203,12 @@ const SamplesDetailContent = ({samplesByID, containersByID, individualsByID, use
 
 function renderTimelineLabel(version, usersByID) {
   const user = usersByID[version.revision.user];
+  const username = user?.username ?? "Loading...";
+
   return (
     <div>
       <div><Text type="secondary">{dateToString(version.revision.date_created)}</Text></div>
-      <div><Text disabled style={usernameStyle}><UserOutlined /> {user?.username ?? '[Loading]'}</Text></div>
+      <div><Text disabled style={usernameStyle}><UserOutlined /> {username}</Text></div>
     </div>
   )
 }

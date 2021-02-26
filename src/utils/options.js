@@ -1,12 +1,15 @@
 import React from "react";
 
 import {Typography} from "antd";
-import "antd/es/typography/style/css";
 const {Text} = Typography
 
 
 export function render(v) {
   return { value: v, label: v }
+}
+
+export function renderGroup(g) {
+  return { value: g.id, label: g.name }
 }
 
 export function renderIndividual(i) {

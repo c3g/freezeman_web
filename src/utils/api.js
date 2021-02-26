@@ -17,7 +17,7 @@ const api = {
   containers: {
     get: id => get(`/containers/${id}/`),
     add: container => post("/containers/", container),
-    update: container => put(`/containers/${container.id}/`, container),
+    update: container => patch(`/containers/${container.id}/`, container),
     list: (options, abort) => get("/containers", options, { abort }),
     listExport: options => get("/containers/list_export/", {format: "csv", ...options}),
     listParents: id => get(`/containers/${id}/list_parents/`),
@@ -36,7 +36,7 @@ const api = {
   individuals: {
     get: individualId => get(`/individuals/${individualId}/`),
     add: individual => post("/individuals/", individual),
-    update: individual => put(`/individuals/${individual.id}/`, individual),
+    update: individual => patch(`/individuals/${individual.id}/`, individual),
     list: (options, abort) => get("/individuals/", options, { abort }),
     listExport: options => get("/individuals/list_export/", {format: "csv", ...options}),
     search: q => get("/individuals/search/", { q }),
@@ -45,7 +45,7 @@ const api = {
   samples: {
     get: sampleId => get(`/samples/${sampleId}/`),
     add: sample => post("/samples/", sample),
-    update: sample => put(`/samples/${sample.id}/`, sample),
+    update: sample => patch(`/samples/${sample.id}/`, sample),
     list: (options, abort) => get("/samples", options, { abort }),
     listExport: options => get("/samples/list_export/", {format: "csv", ...options}),
     listCollectionSites: () => get("/samples/list_collection_sites/"),
@@ -59,13 +59,25 @@ const api = {
     search: q => get("/samples/search/", { q }),
   },
 
+  sampleKinds: {
+    list: () => get("/sample-kinds/"),
+  },
+
   users: {
+    get: userId => get(`/users/${userId}/`),
+    add: user => post("/users/", user),
+    update: user => patch(`/users/${user.id}/`, user),
+    updateSelf: user => patch(`/users/update_self/`, user),
     list: (options, abort) => get("/users", options, { abort }),
     listVersions: userId => get(`/versions?revision__user=${userId}&limit=999999`), // TODO: handle versions?
   },
 
+  groups: {
+    list: (options, abort) => get("/groups", options, { abort }),
+  },
+
   query: {
-    search: q => get("/query/search/", { q }),
+    search: q => get("/query/search/", { q }, { abort: true }),
   },
 };
 
@@ -142,8 +154,8 @@ function post(route, body, options) {
   return apiFetch('POST', route, body, options);
 }
 
-function put(route, body, options) {
-  return apiFetch('PUT', route, body, options);
+function patch(route, body, options) {
+  return apiFetch('PATCH', route, body, options);
 }
 
 
@@ -151,13 +163,8 @@ function createAPIError(response) {
   let data = response.data;
   let detail;
 
-  // Django validation errors kind of error
-  if (!response.isJSON && response.status === 500) {
-    data = parseDjangoError(data)
-    detail = JSON.stringify(data)
-  }
-  // Other type of django validation errors
-  else if (response.isJSON && response.status === 400) {
+  // Server errors
+  if (response.isJSON && response.status === 400) {
     detail = JSON.stringify(data, null, 2)
   }
   else {
@@ -182,16 +189,6 @@ function createAPIError(response) {
   error.stack = []
 
   return error;
-}
-
-function parseDjangoError(html) {
-  const $ = cheerio.load(html)
-  const text = $('.exception_value').text()
-  const transformed = text.replace(/'(\w+)':/g, '$1:')
-  /* Using eval() is hidious but the thing that Django
-   * returns isn't JSON -_- */
-  const errors = eval(`(${transformed})`)
-  return map(es => es.join(', '), errors)
 }
 
 function attachData(response) {

@@ -1,14 +1,6 @@
 import React, {useState} from "react";
 import PropTypes from "prop-types";
-
 import {Alert, Button, Form, Steps, Upload, Row, Col} from "antd";
-import "antd/es/alert/style/css";
-import "antd/es/button/style/css";
-import "antd/es/form/style/css";
-import "antd/es/steps/style/css";
-import "antd/es/upload/style/css";
-import "antd/es/row/style/css";
-import "antd/es/col/style/css";
 
 import {
   ArrowRightOutlined,
@@ -35,6 +27,15 @@ function renderResult(checkResult) {
           Row {index}: {e.error}
         </div>
       )
+    })
+    row.validation_error?.forEach(field => {
+      field[1].forEach(reason => {
+        errors.push(
+          <div key={'row-' + index + field[0] + reason}>
+            Row {index}: {field[0]} - {reason}
+          </div>
+        )
+      })
     })
   })
 
@@ -287,7 +288,7 @@ const TemplateFlow = (props) => {
               type="primary"
               onClick={goBack}
             >
-              <CheckOutlined /> Go Back to Containers
+              <CheckOutlined /> Go Back
             </Button>
         }
       </Col>

@@ -9,16 +9,17 @@ import PaginatedTable from "../PaginatedTable";
 import AddButton from "../AddButton";
 import ExportButton from "../ExportButton";
 
-
-import {list, setFilter, clearFilters, setSortBy} from "../../modules/containers/actions";
+import {listTable, setFilter, setFilterOption, clearFilters, setSortBy} from "../../modules/containers/actions";
 import api, {withToken}  from "../../utils/api"
 import {actionsToButtonList} from "../../utils/templateActions";
 import {withContainer, withSample} from "../../utils/withItem";
-import serializeFilterParams from "../../utils/serializeFilterParams";
+import mergedListQueryParams from "../../utils/mergedListQueryParams";
 
 import {CONTAINER_FILTERS} from "../filters/descriptions";
 import getFilterProps from "../filters/getFilterProps";
+import getNFilters from "../filters/getNFilters";
 import FiltersWarning from "../filters/FiltersWarning";
+
 
 const CONTAINER_KIND_SHOW_SAMPLE = ["tube"]
 
@@ -97,7 +98,7 @@ const mapStateToProps = state => ({
   samplesByID: state.samples.itemsByID,
 });
 
-const actionCreators = {list, setFilter, clearFilters, setSortBy};
+const actionCreators = {listTable, setFilter, setFilterOption, clearFilters, setSortBy};
 
 const ContainersListContent = ({
   token,
@@ -111,14 +112,15 @@ const ContainersListContent = ({
   isFetching,
   page,
   totalCount,
-  list,
+  listTable,
   setFilter,
+  setFilterOption,
   clearFilters,
   setSortBy,
 }) => {
   const listExport = () =>
     withToken(token, api.containers.listExport)
-      (serializeFilterParams(filters, CONTAINER_FILTERS))
+      (mergedListQueryParams(CONTAINER_FILTERS, filters, sortBy))
       .then(response => response.data)
 
   const columns = getTableColumns(samplesByID, containersByID, containerKinds)
@@ -127,9 +129,10 @@ const ContainersListContent = ({
       CONTAINER_FILTERS,
       filters,
       setFilter,
+      setFilterOption
     )))
 
-  const nFilters = Object.entries(filters).filter(e => e[1]).length
+  const nFilters = getNFilters(filters)
 
   return <>
     <AppPageHeader title="Containers" extra={[
@@ -139,7 +142,11 @@ const ContainersListContent = ({
     ]}/>
     <PageContent>
       <div style={{ textAlign: 'right', marginBottom: '1em' }}>
-        <FiltersWarning value={nFilters} />
+        <FiltersWarning
+          nFilters={nFilters}
+          filters={filters}
+          description={CONTAINER_FILTERS}
+        />
         <Button
           disabled={nFilters === 0}
           onClick={clearFilters}
@@ -156,7 +163,7 @@ const ContainersListContent = ({
         page={page}
         filters={filters}
         sortBy={sortBy}
-        onLoad={list}
+        onLoad={listTable}
         onChangeSort={setSortBy}
       />
     </PageContent>
