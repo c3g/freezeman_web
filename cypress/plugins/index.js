@@ -12,8 +12,6 @@
 // This function is called when a project is opened or re-opened (e.g. due to
 // the project's config changing)
 
-const ethereal = require('../ethereal.js')
-
 /**
  * @type {Cypress.PluginConfig}
  */
@@ -25,9 +23,5 @@ module.exports = (on, config) => {
 
   on('task', {
     'log': console.log,
-
-    'ethereal__create': ethereal.create,
-    'ethereal__readAll': ethereal.readAll,
-    'ethereal__findSignUpLink': ethereal.findSignUpLink,
   })
 }

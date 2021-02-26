@@ -43,7 +43,7 @@ context('All tests', () => {
   })
 
   context('Containers', () => {
-    it.only('creates single container', () => {
+    it('creates single container', () => {
       navigateTo('Container', 'Add')
       const name = 'test-container-add'
       const comment = 'This is a comment.'
@@ -62,7 +62,7 @@ context('All tests', () => {
       submit()
       cy.get('.ant-alert-success').should('contain', 'Template submitted')
       cy.get('button').contains('Go Back').click()
-      cy.get('body').should('contain', '1-10 of 14 items')
+      cy.get('body').should('contain', '1-10 of 15 items')
     })
   })
 
@@ -76,57 +76,4 @@ context('All tests', () => {
       cy.get('body').should('contain', '1-8 of 8 items')
     })
   })
-
-
-  // Examples
-
-  // it('invites users', () => {
-  //   login()
-  //   cy.get('[href="/admin/users"]').click()
-  //   cy.url()
-  //     .should('contain', '/admin/users')
-  //   cy.log('Creating email account...')
-  //   cy.wait(1000)
-
-  //   cy.task('ethereal__create')
-  //     .then(result => {
-  //       createdAccount = result
-
-  //       cy.log('Created email account: ' + createdAccount.username)
-
-  //       cy.get('#email')
-  //         .type(createdAccount.username)
-  //       cy.get('form').submit()
-
-  //       cy.contains(createdAccount.username)
-  //     })
-  // })
-
-  // it('can sign up', () => {
-  //   cy.task('ethereal__findSignUpLink', createdAccount)
-  //     .then(url => {
-  //       cy.visit(url)
-
-  //       const [firstName, lastName] = createdAccount.name.split(' ')
-  //       const lab = 'Bourque'
-  //       const institution = 'McGill'
-  //       const institutionAddress = '704 Dr. Penfield'
-
-  //       cy.get('#password').type(createdAccount.password)
-  //       cy.get('#firstName').type(firstName)
-  //       cy.get('#lastName').type(lastName)
-  //       cy.get('#lab').type(lab)
-  //       cy.get('#institution').type(institution)
-  //       cy.get('#institutionAddress').type(institutionAddress)
-
-  //       cy.get('form').submit()
-
-  //       cy.contains(`Welcome, ${firstName}`)
-  //       cy.get('#firstName').should('have.value', firstName)
-  //       cy.get('#lastName').should('have.value', lastName)
-  //       cy.get('#lab').should('have.value', lab)
-  //       cy.get('#institution').should('have.value', institution)
-  //       cy.get('#institutionAddress').should('have.value', institutionAddress)
-  //     })
-  // })
 })
