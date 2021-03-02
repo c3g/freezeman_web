@@ -11,6 +11,7 @@ export const FILTER_TYPE = {
 export const BIOSPECIMEN_TYPE = [
   "DNA",
   "RNA",
+  "BAL",
   "BLOOD",
   "CELLS",
   "EXPECTORATION",
@@ -21,6 +22,7 @@ export const BIOSPECIMEN_TYPE = [
 ]
 
 export const TISSUE_SOURCE = [
+  "BAL",
   "Blood",
   "Cells",
   "Expectoration",
