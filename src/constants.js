@@ -12,6 +12,7 @@ export const BIOSPECIMEN_TYPE = [
   "DNA",
   "RNA",
   "BAL",
+  "BIOPSY",
   "BLOOD",
   "CELLS",
   "EXPECTORATION",
@@ -24,6 +25,7 @@ export const BIOSPECIMEN_TYPE = [
 
 export const TISSUE_SOURCE = [
   "BAL",
+  "Biopsy",
   "Blood",
   "Cells",
   "Expectoration",
