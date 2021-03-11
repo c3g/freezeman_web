@@ -17,6 +17,7 @@ export const BIOSPECIMEN_TYPE = [
   "EXPECTORATION",
   "GARGLE",
   "PLASMA",
+  "RESPIRATORY SECRETION",
   "SALIVA",
   "SWAB",
 ]
@@ -28,6 +29,7 @@ export const TISSUE_SOURCE = [
   "Expectoration",
   "Gargle",
   "Plasma",
+  "Respiratory secretion",
   "Saliva",
   "Swab",
   "Tumor",
