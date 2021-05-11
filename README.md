@@ -1,3 +1,5 @@
+Continued at https://github.com/c3g/freezeman
+
 # FreezeMan Web
 
 React-based front-end for the FreezeMan system.
